@@ -1,3 +1,4 @@
 fn main() {
-    int a = 5;
+    int a=5555;
+    a = 25;
 }

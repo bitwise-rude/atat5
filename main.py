@@ -1,3 +1,4 @@
+import lexluthor
 import sys
 
 def read_file() -> str:
@@ -15,5 +16,8 @@ def read_file() -> str:
 def print_invalid_usage_error(msg:str) -> None:
     print(f"\n\tINVALID USAGE:\n\t\t{msg}")
     quit()
-
+ 
 contents = read_file()
+
+tokenizer_obj = lexluthor.Tokenizer(contents)
+tokenizer_obj.tokenize()
