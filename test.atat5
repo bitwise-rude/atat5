@@ -1,4 +1,4 @@
-fn main(.) {
-    int a=5555;
+fn main() {
+    let a=255;
     a = 25;
 }

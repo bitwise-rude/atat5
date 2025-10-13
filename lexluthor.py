@@ -1,22 +1,10 @@
-import string
 from errors import IdentifierUnknown
+from atoms import *
 
 ###################3
 #   Tokenizer
 ###################3
 
-### Defining the atoms
-KEYWORDS = ['fn','int']
-BRACKETS ={
-            "(":    "left_small"   ,
-            ")":    "right_small" ,
-            "{":    "left_curly"   ,
-             "}":   "right_curly" ,
-            }
-EQUALS = "="
-SEMI = ";"
-NAMES = string.ascii_letters+"_" # anything except keyword is NAMES
-NUMBERS = "0123456789"
 
 class Tokenizer:
     def __init__(self,raw_contents:str) -> None:
@@ -40,8 +28,8 @@ class Tokenizer:
                     _temp_string += self._raw[_index2]
                     _index2 += 1
                 # what we've found could be a  keyword or a name
-                if _temp_string in KEYWORDS:
-                    self.tokens.append({"KEYWORD":_temp_string})
+                if _temp_string in KEYWORDS.keys():
+                    self.tokens.append({"KEYWORD":KEYWORDS[_temp_string]})
                 else:
                     self.tokens.append({"NAME":_temp_string})
             
@@ -52,7 +40,7 @@ class Tokenizer:
                     
                     _temp_string += self._raw[_index2]
                     _index2 += 1
-                # what we've found could be a  keyword or a name
+          
                 self.tokens.append({"NUMBER":_temp_string})
             
             # don't care for a space or new line

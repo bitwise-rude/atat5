@@ -24,3 +24,4 @@ tokenizer_obj = lexluthor.Tokenizer(contents)
 tokens = tokenizer_obj.tokenize()
 
 parser_obj = paras.Parser(tokens)
+parser_obj.parse()
