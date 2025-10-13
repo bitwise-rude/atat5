@@ -1,4 +1,5 @@
 import lexluthor
+import paras
 import sys
 
 def read_file() -> str:
@@ -20,4 +21,6 @@ def print_invalid_usage_error(msg:str) -> None:
 contents = read_file()
 
 tokenizer_obj = lexluthor.Tokenizer(contents)
-tokenizer_obj.tokenize()
+tokens = tokenizer_obj.tokenize()
+
+parser_obj = paras.Parser(tokens)

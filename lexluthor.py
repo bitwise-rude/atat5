@@ -1,4 +1,5 @@
 import string
+from errors import IdentifierUnknown
 
 ###################3
 #   Tokenizer
@@ -22,7 +23,7 @@ class Tokenizer:
         self._raw = raw_contents
         self.tokens = []
 
-    def tokenize(self) -> None:
+    def tokenize(self) -> list[dict]:
         _index = 0
 
         while _index < len(self._raw):
@@ -75,12 +76,11 @@ class Tokenizer:
             
             
             else:
-                print(f"ERROR OCCURED {checking_word}")
+                print(IdentifierUnknown("Unknown Identifier"))
+                quit()
             _index = _index2
             
-
-            
-        print(self.tokens)
+        return self.tokens
 
 
 

@@ -1,4 +1,4 @@
-fn main() {
+fn main(.) {
     int a=5555;
     a = 25;
 }
