@@ -51,14 +51,16 @@ class Parser:
     def rule_function_block(self,_,_value,_ind)-> tuple:
         if _value == "left_curly": # blocks start with curly 
             ## Now Parse after left_curly till the next right_curly
-            new = self.parse(_ind+1) # parse after the curly bracket
+            new = self.parse(_ind+1,till="right_curly") # parse after the curly bracket
+
+            if new == -1:
+                return (False,f'Expected to Close the function using a {BRACKETS['right_curly']}')
             # print(new-_ind) is the covered
             return (True,new-_ind)
         
         else:
             return (False,"Function Blocks Start with '{")
     
-
     
     def _parse_keyword(self,index):
         '''Parses the keyword according to the grammar'''
@@ -86,22 +88,31 @@ class Parser:
                 rules_index +=1
         return _covered + rules_index +1 
 
-    def parse(self,current=0):
+    def parse(self,current=0,till=None):
         # parsing different keywords
         # keywords are parsed as stuff that always follow a 
         # pattern
         # current means from where to start (tokens list) 
-        # to maintain recursivity
+        # to maintain recursivity -> till, parse till what 
 
 
         while current < len(self._tokens):
             token_type = list(self._tokens[current].keys())[0] 
+            token_type_value = (self._tokens[current][token_type])[0]
+            
+            if till and (till == token_type_value): # useful for blocks
+                current += 1 
+                return current
 
-            if token_type == 'KEYWORD':
+            elif token_type == 'KEYWORD':
                 covered_ = self._parse_keyword(current)
                 current += covered_
             
-            if token_type == "PARENTHESIS": ## maybe the ending curly bracked # TODO: fix later
-                current +=1
-        return current 
+            else:
+                self.error_manager.show_error_and_exit(SyntaxError,"NOT IMPLEMENTED")
         
+        # if top level didn't find till
+        if till:
+            return -1
+         
+        # self.error_manager.show_error_and_exit(SyntaxError,"NOT IMPLEMENTED  2")

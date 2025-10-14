@@ -1,6 +1,8 @@
 # ATAT5 -> A high level language that compiles to 8085 assembly
 -- COOL COOL COOL
 
+## Next thing to do
+-- parser works now generate AST
 
 ## BUGS
 - Semicolon is checked in the new line too fix that ## FIXED

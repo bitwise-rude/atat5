@@ -1,4 +1,4 @@
 fn main() {
     let a = 255;
-    
+    let b = 320;
 }
