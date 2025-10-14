@@ -5,13 +5,26 @@ from atoms import *
 from errors import BipatSyntax
 #### Rules
 
+
+###############
+## Rule Book 
+##############
 # Keyword rules
+class Rule:
+    # Consists Rules functions
+    #override
+    def name_rule(self,stuff):
+        pass
+
+
+
 KEYWORD_RULES = {
     "func_dec":[
-        {"NAME":""}, # Empty values means, anything can be there like fn foo(){}
-        {"PARENTHESIS":"left_small"},
-        {"PARENTHESIS":"right_small"},
-        {"BLOCK":""},
+        lambda _key,_value: True if _key == "NAME" else False, # Wow, every rule is a function
+        lambda _key,_value: True if _value == "left_small" else False,
+        lambda _key,_value: True if _value == "right_small" else False,
+        # block
+        lambda _key,_value: True if _key == "block" else False
     ],
 
     "var_dec":[]
@@ -33,19 +46,11 @@ class Parser:
         
         # see if rule for a keyword is followed else it is a syntax error
         for i in range(len(_rules)):
-            rule_keys = list(_rules[i].keys())[0]
-            rule_value = list(_rules[i].values())[0]
-
             token_keys = list(self._tokens[index+i+1].keys())[0]
             token_values = list(self._tokens[index+i+1].values())[0][0]
-            print(rule_keys,rule_value,token_keys,token_values)
-            if rule_keys == token_keys: # mactchin keys
-                # if empty no need 
-                if rule_value !="":
-                    if rule_value == token_values:
-                        pass# good
-                    else:
-                        print("ERR") # error
+            
+            if _rules[i](token_keys,token_values):
+                print("OK")
             else:
                 print("ERR") # error
 

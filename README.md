@@ -2,11 +2,14 @@
 -- COOL COOL COOL
 
 
+
 - variable names or anything can be abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_ nothing except this
 
 - if you wanna change keywords or = change the values in the dict
 
 - lexer stores the tokens as {KEYWORD:(stuff,line_no,Page_no)}
+
+- Every rule in a rulebook is a function (for parser) that returns True, or the Error
 
 ## TODO
 - make error system more robust by indicating the line where error occured

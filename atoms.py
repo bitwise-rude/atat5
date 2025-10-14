@@ -3,7 +3,7 @@
 import string
 
 
-### Defining the atoms, if you wanna change something change the values
+### Defining the atoms, if you wanna change something change the keys
 KEYWORDS = {'fn':'func_dec','let':'var_dec'} 
 BRACKETS ={
             "(":    "left_small"   ,
