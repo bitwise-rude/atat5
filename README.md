@@ -6,6 +6,8 @@
 
 - if you wanna change keywords or = change the values in the dict
 
+- lexer stores the tokens as {KEYWORD:(stuff,line_no,Page_no)}
 
 ## TODO
+- make error system more robust by indicating the line where error occured
 -   make thing for floats

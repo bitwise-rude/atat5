@@ -14,4 +14,21 @@ class Bipat:
     
 class IdentifierUnknown(Bipat):
     def __init__(self, msg):
-        super().__init__("IdentifierUnknown", msg)       
+        super().__init__("IdentifierUnknown", msg)     
+
+class BipatSyntax(Bipat):
+    def __init__(self,  msg):
+        super().__init__('BipatSyntax', msg)
+
+class BipatManager():
+    """ Manages Bipat"""
+    def __init__(self,raw_code):
+        self._raw_code = raw_code
+    
+    def show_error_and_exit(self,error_kind,msg:str,line_no=0,word_no=0):
+        print(error_kind(msg))
+        print(f"ERROR AT {line_no}:{word_no}")
+
+        quit()
+
+        

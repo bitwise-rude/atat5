@@ -1,15 +1,16 @@
 import lexluthor
 import paras
 import sys
+import errors
 
-def read_file() -> str:
+def read_file() -> list[str]:
     # read file from argument
     if len(sys.argv) > 1:
         try:
             file_ = open(sys.argv[1],'r')
         except:
             print_invalid_usage_error("FILE NOT FOUND")
-        contents = file_.read()
+        contents = file_.readlines()
         file_.close()
         return contents
     print_invalid_usage_error(f"USE:     {sys.argv[0]} <filename>")
@@ -18,9 +19,11 @@ def print_invalid_usage_error(msg:str) -> None:
     print(f"\n\tINVALID USAGE:\n\t\t{msg}")
     quit()
  
-contents = read_file()
+contents:list[str] = read_file()
 
-tokenizer_obj = lexluthor.Tokenizer(contents)
+bipat_manager = errors.BipatManager(contents)
+
+tokenizer_obj = lexluthor.Tokenizer(contents,bipat_manager)
 tokens = tokenizer_obj.tokenize()
 
 parser_obj = paras.Parser(tokens)
