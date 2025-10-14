@@ -29,7 +29,7 @@ class Parser:
         ]
 }
     
-    # definition of various rules
+    # definition of various rules returns a tuple (True,no_of_tokens to skip)
     def rule_name(self,_key,_,_ind) -> tuple:
         return (1,1) if _key == "NAME" else (False,"Expected a variable")
 
@@ -51,10 +51,9 @@ class Parser:
     def rule_function_block(self,_,_value,_ind)-> tuple:
         if _value == "left_curly": # blocks start with curly 
             ## Now Parse after left_curly till the next right_curly
-
-            self.parse(_ind+1) # parse after the curly bracket
-
-            return (False,"NotImplemented")
+            new = self.parse(_ind+1) # parse after the curly bracket
+            # print(new-_ind) is the covered
+            return (True,new-_ind)
         
         else:
             return (False,"Function Blocks Start with '{")
@@ -66,27 +65,26 @@ class Parser:
         _keyword_tup = self._tokens[index]["KEYWORD"]
         _keyword = _keyword_tup[0]
 
-        # _line_no = _keyword_tup[1]
-        # _index_no = _keyword_tup[2]
         _rules = self.keyword_rules[_keyword] 
-        
+
+        _covered = 0 # REMEMBER : minimum tokens to skip will be rules
         # see if rule for a keyword is followed else it is a syntax error
         rules_index = 0
         while  rules_index < len(_rules):
-            print("YYY")
             token_keys = list(self._tokens[index+rules_index+1].keys())[0]
             token_values = list(self._tokens[index+rules_index+1].values())[0][0]
             _line_no = list(self._tokens[index+rules_index+1].values())[0][1]
-            print(_line_no)
             _index_no = list(self._tokens[index+rules_index+1].values())[0][2]
-         
 
             response = _rules[rules_index](token_keys,token_values,index+rules_index+1) # call the specific rule book function
             if response[0]:
                 rules_index += 1   
+                _covered += (response[1]-1)
+
             else:
                 self.error_manager.show_error_and_exit(BipatSyntax,response[1],_line_no+1,_index_no+1)
                 rules_index +=1
+        return _covered + rules_index +1 
 
     def parse(self,current=0):
         # parsing different keywords
@@ -94,9 +92,16 @@ class Parser:
         # pattern
         # current means from where to start (tokens list) 
         # to maintain recursivity
-        print(self._tokens)
+
 
         while current < len(self._tokens):
-            token_type = list(self._tokens[current].keys())[0]  
+            token_type = list(self._tokens[current].keys())[0] 
+
             if token_type == 'KEYWORD':
-                self._parse_keyword(current)
+                covered_ = self._parse_keyword(current)
+                current += covered_
+            
+            if token_type == "PARENTHESIS": ## maybe the ending curly bracked # TODO: fix later
+                current +=1
+        return current 
+        

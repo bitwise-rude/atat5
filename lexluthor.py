@@ -58,7 +58,6 @@ class Tokenizer:
                 
                 # brackets
                 elif checking_word in BRACKETS.values():
-                    print(current_line[_index])
 
                     # REMEMBER: the dictionary keys value mumbo jumbo shit
                     self.tokens.append({"PARENTHESIS":(list(BRACKETS)[list(BRACKETS.values()).index(current_line[_index])],_line_no,_index)})
