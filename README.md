@@ -2,7 +2,10 @@
 -- COOL COOL COOL
 
 
+## BUGS
+- Semicolon is checked in the new line too fix that
 
+## STUFF
 - variable names or anything can be abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_ nothing except this
 
 - if you wanna change keywords or = change the values in the dict

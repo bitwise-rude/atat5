@@ -4,12 +4,12 @@ import string
 
 
 ### Defining the atoms, if you wanna change something change the keys
-KEYWORDS = {'fn':'func_dec','let':'var_dec'} 
+KEYWORDS = {'func_dec':'fn','var_dec':'let'} 
 BRACKETS ={
-            "(":    "left_small"   ,
-            ")":    "right_small" ,
-            "{":    "left_curly"   ,
-             "}":   "right_curly" ,
+             "left_small":"("   ,
+             "right_small":")"   ,
+            "left_curly":"{"      ,
+             "right_curly":"}"    ,
             }
 EQUALS = "="
 SEMI = ";"

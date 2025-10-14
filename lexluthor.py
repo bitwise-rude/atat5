@@ -37,8 +37,9 @@ class Tokenizer:
                         _temp_string += current_line[_index2]
                         _index2 += 1
                     # what we've found could be a  keyword or a name
-                    if _temp_string in KEYWORDS.keys():
-                        self.tokens.append({"KEYWORD":(KEYWORDS[_temp_string],_line_no,_index)})
+                
+                    if _temp_string in KEYWORDS.values():
+                        self.tokens.append({"KEYWORD":(list(KEYWORDS)[list(KEYWORDS.values()).index(_temp_string)],_line_no,_index)})
                     else:
                         self.tokens.append({"NAME":(_temp_string,_line_no,_index)})
                 
@@ -56,8 +57,11 @@ class Tokenizer:
                     _index2 += 1
                 
                 # brackets
-                elif checking_word in BRACKETS.keys():
-                    self.tokens.append({"PARENTHESIS":(BRACKETS[current_line[_index]],_line_no,_index)})
+                elif checking_word in BRACKETS.values():
+                    print(current_line[_index])
+
+                    # REMEMBER: the dictionary keys value mumbo jumbo shit
+                    self.tokens.append({"PARENTHESIS":(list(BRACKETS)[list(BRACKETS.values()).index(current_line[_index])],_line_no,_index)})
                     _index2 += 1
                 
                 # equals to
