@@ -26,5 +26,5 @@ bipat_manager = errors.BipatManager(contents)
 tokenizer_obj = lexluthor.Tokenizer(contents,bipat_manager)
 tokens = tokenizer_obj.tokenize()
 
-parser_obj = paras.Parser(tokens)
+parser_obj = paras.Parser(tokens,bipat_manager)
 parser_obj.parse()

@@ -9,7 +9,7 @@
 
 - lexer stores the tokens as {KEYWORD:(stuff,line_no,Page_no)}
 
-- Every rule in a rulebook is a function (for parser) that returns True, or the Error
+- Every rule in a rulebook is a method of parser class that returns stuff, or the Error
 
 ## TODO
 - make error system more robust by indicating the line where error occured
