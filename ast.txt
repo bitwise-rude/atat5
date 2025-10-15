@@ -1,0 +1,8 @@
+How would the AST look like??
+
+-- I don't know how actuall AST parsing is done but
+-- This is how mine works
+
+---> AST = [[FX_1],[FX_2].....]
+AST will be list of lists
+each member list will be a function

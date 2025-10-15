@@ -1,4 +1,3 @@
-fn main() {
+fx main() {
     let a = 255;
-    let b = 320;
-}
+    let b = 210;

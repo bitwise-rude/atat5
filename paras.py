@@ -28,6 +28,7 @@ class Parser:
             self.rule_semicolon,
         ]
 }
+        self.AST = []
     
     # definition of various rules returns a tuple (True,no_of_tokens to skip)
     def rule_name(self,_key,_,_ind) -> tuple:

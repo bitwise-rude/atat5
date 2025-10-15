@@ -4,7 +4,7 @@ import string
 
 
 ### Defining the atoms, if you wanna change something change the keys
-KEYWORDS = {'func_dec':'fn','var_dec':'let'} 
+KEYWORDS = {'func_dec':'fx','var_dec':'let'} 
 BRACKETS ={
              "left_small":"("   ,
              "right_small":")"   ,
