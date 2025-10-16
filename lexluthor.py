@@ -5,6 +5,13 @@ from atoms import *
 #   Tokenizer
 ###################3
 
+class Token:
+    def __init__(self,type,line_no,pos,val=None):
+        self.type = type
+        self.line_no = line_no
+        self.val = val
+        self.pos = pos
+
 
 class Tokenizer:
     def __init__(self,raw_contents:list[str],error_manager:BipatManager) -> None:
@@ -37,11 +44,13 @@ class Tokenizer:
                         _temp_string += current_line[_index2]
                         _index2 += 1
                     # what we've found could be a  keyword or a name
-                
+        
                     if _temp_string in KEYWORDS.values():
-                        self.tokens.append({"KEYWORD":(list(KEYWORDS)[list(KEYWORDS.values()).index(_temp_string)],_line_no,_index)})
+                        _=Token("KEYWORD",_line_no,_index,list(KEYWORDS)[list(KEYWORDS.values()).index(_temp_string)])
+                        self.tokens.append(_)
                     else:
-                        self.tokens.append({"NAME":(_temp_string,_line_no,_index)})
+                        _ = Token("NAME",_line_no,_index,_temp_string)
+                        self.tokens.append(_)
                 
                 # do similar thing for numbers
                 elif checking_word in NUMBERS:
@@ -49,8 +58,9 @@ class Tokenizer:
                     while  current_line[_index2]  in NUMBERS:
                         _temp_string += current_line[_index2]
                         _index2 += 1
-            
-                    self.tokens.append({"NUMBER":(_temp_string,_line_no,_index)})
+
+                    _ = Token("NUMBER",_line_no,_index,_temp_string)
+                    self.tokens.append(_)
                 
                 # don't care for a space or new line
                 elif checking_word == " " or checking_word == "\n": 
@@ -60,17 +70,20 @@ class Tokenizer:
                 elif checking_word in BRACKETS.values():
 
                     # REMEMBER: the dictionary keys value mumbo jumbo shit
-                    self.tokens.append({"PARENTHESIS":(list(BRACKETS)[list(BRACKETS.values()).index(current_line[_index])],_line_no,_index)})
+                    _ = Token("PARENTHESIS",_line_no,_index,list(BRACKETS)[list(BRACKETS.values()).index(current_line[_index])])
+                    self.tokens.append(_)
                     _index2 += 1
                 
                 # equals to
                 elif checking_word == EQUALS:
-                    self.tokens.append({"EQUALS":(EQUALS,_line_no,_index)})
+                    _ = Token("EQUALS",_line_no,_index,EQUALS)
+                    self.tokens.append(_)
                     _index2 += 1
 
                 # semi colon
                 elif checking_word == SEMI:
-                    self.tokens.append({"SEMI":(SEMI,_line_no,_index)}) 
+                    _ = Token("SEMI",_line_no,_index,SEMI)
+                    self.tokens.append(_)
                     _index2 += 1
                 
                 

@@ -5,7 +5,6 @@ from atoms import *
 from errors import BipatSyntax,BipatManager
 
 
-
 ### Main Parser Class
 class Parser:
     def __init__(self,tokens:list[dict],error_manager:BipatManager) -> None:
@@ -28,26 +27,27 @@ class Parser:
             self.rule_semicolon,
         ]
 }
+        # explained in ast.txt
         self.AST = []
     
     # definition of various rules returns a tuple (True,no_of_tokens to skip)
     def rule_name(self,_key,_,_ind) -> tuple:
-        return (1,1) if _key == "NAME" else (False,"Expected a variable")
+        return (True,1) if _key == "NAME" else (False,"Expected a variable")
 
     def rule_left_small(self,_,_value,_ind)-> tuple:
-        return (1,1) if _value == "left_small" else (False,f"Expected a '{BRACKETS['left_small']}'")
+        return (True,1) if _value == "left_small" else (False,f"Expected a '{BRACKETS['left_small']}'")
 
     def rule_right_small(self,_,_value,_ind)-> tuple:
-        return (1,1) if _value == "right_small" else (False,f"Expected a '{BRACKETS["right_small"]}'")
+        return (True,1) if _value == "right_small" else (False,f"Expected a '{BRACKETS["right_small"]}'")
 
     def rule_equals(self,_,_value,_ind)-> tuple:
-        return (1,1) if _value == EQUALS else (False,f"Expected a {EQUALS}")
+        return (True,1) if _value == EQUALS else (False,f"Expected a {EQUALS}")
 
     def rule_numbers(self,keys,_,_ind) -> tuple:
-        return (1,1) if keys == "NUMBER" else (False, f"Expected a Number Literal")
+        return (True,1) if keys == "NUMBER" else (False, f"Expected a Number Literal")
     
     def rule_semicolon(self,keys,_,_ind) -> tuple:
-        return (1,1) if keys == "SEMI" else (False, f"Expected a {SEMI}")
+        return (True,1) if keys == "SEMI" else (False, f"Expected a {SEMI}")
     
     def rule_function_block(self,_,_value,_ind)-> tuple:
         if _value == "left_curly": # blocks start with curly 
@@ -65,8 +65,8 @@ class Parser:
     
     def _parse_keyword(self,index):
         '''Parses the keyword according to the grammar'''
-        _keyword_tup = self._tokens[index]["KEYWORD"]
-        _keyword = _keyword_tup[0]
+        _keyword_obj = self._tokens[index]
+        _keyword = _keyword_obj.val
 
         _rules = self.keyword_rules[_keyword] 
 
@@ -74,10 +74,15 @@ class Parser:
         # see if rule for a keyword is followed else it is a syntax error
         rules_index = 0
         while  rules_index < len(_rules):
-            token_keys = list(self._tokens[index+rules_index+1].keys())[0]
-            token_values = list(self._tokens[index+rules_index+1].values())[0][0]
-            _line_no = list(self._tokens[index+rules_index+1].values())[0][1]
-            _index_no = list(self._tokens[index+rules_index+1].values())[0][2]
+            # token_keys = self._tokens[index+rules_index+1].type
+            # token_values = list(self._tokens[index+rules_index+1].values())[0][0]
+            # _line_no = list(self._tokens[index+rules_index+1].values())[0][1]
+            # _index_no = list(self._tokens[index+rules_index+1].values())[0][2]
+
+            token_keys = self._tokens[index+rules_index+1].type
+            token_values = self._tokens[index+rules_index+1].val
+            _line_no = self._tokens[index+rules_index+1].line_no
+            _index_no = self._tokens[index+rules_index+1].pos
 
             response = _rules[rules_index](token_keys,token_values,index+rules_index+1) # call the specific rule book function
             if response[0]:
@@ -98,8 +103,8 @@ class Parser:
 
 
         while current < len(self._tokens):
-            token_type = list(self._tokens[current].keys())[0] 
-            token_type_value = (self._tokens[current][token_type])[0]
+            token_type = self._tokens[current].type
+            token_type_value = (self._tokens[current]).val
             
             if till and (till == token_type_value): # useful for blocks
                 current += 1 
