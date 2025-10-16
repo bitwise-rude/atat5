@@ -18,6 +18,8 @@
 
 - For stuff begining with names like Variable names, i have only implemented storage like (a = 5 or a = b)
 
+- Should i make workingNodes a list?
+
 ## MUST DO
 - i have used right curly bracket as the default parenthesis to end inside the prase function
 

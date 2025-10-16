@@ -6,3 +6,8 @@ How would the AST look like??
 ---> AST = [[FX_1],[FX_2].....]
 AST will be list of lists
 each member list will be a function
+
+[FX-1] ==> (fn_name, [expps])
+
+expss = expression in side a function, they are gonna be another lists
+exxps = NODES
