@@ -1,4 +1,6 @@
 fx main() {
-    let a = 255;
-    let b = 210;
+    let birth_year = 6;
+    let current_year = 25;
+    
+
 }
