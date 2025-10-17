@@ -13,6 +13,7 @@ BRACKETS ={
             }
 COMMENT = "#"
 OPERATORS = {'add':'+','sub':'-'}
+MULTIWORD = {"EQUALS_TO":("CONDITIONAL_OPERATOR","==")}
 EQUALS = "="
 SEMI = ";"
 NAMES = string.ascii_letters+"_" # anything except keyword is NAMES

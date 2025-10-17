@@ -11,6 +11,8 @@ class Token:
         self.line_no = line_no
         self.val = val
         self.pos = pos
+    def __repr__(self):
+        return self.type + "  " + self.val + "\n"
 
 
 class Tokenizer:
@@ -37,7 +39,23 @@ class Tokenizer:
 
                 checking_word = current_line[_index]
 
-                if checking_word in NAMES:
+                # checking multi letter stuff
+                found_ = False
+                for k,v in MULTIWORD.items():
+                    ## for two letter only
+                    if checking_word == v[1][0] :
+                        if current_line[_index2+1] == v[1][1]:
+                            _ = Token(v[0],_line_no,_index,k)
+                            _index2 +=2
+                            self.tokens.append(_)
+                            found_ = True
+                            break
+                
+                if found_:
+                    _index = _index2
+                    continue
+
+                elif checking_word in NAMES:
                     # search until a non-name character is found
                     while  current_line[_index2]  in NAMES:
                         
@@ -61,6 +79,10 @@ class Tokenizer:
 
                     _ = Token("NUMBER",_line_no,_index,_temp_string)
                     self.tokens.append(_)
+                
+          
+                    
+    
                 
                 # comment checking
                 elif checking_word == COMMENT:
@@ -99,12 +121,12 @@ class Tokenizer:
                     _index2 += 1
                 
        
-                
                 else:
                     self.error_manager.show_error_and_exit(IdentifierUnknown,"Unknown Identifier",_line_no+1,_index+1)
     
                 _index = _index2
-                
+        
+
         return self.tokens
 
 

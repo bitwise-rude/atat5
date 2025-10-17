@@ -34,6 +34,11 @@ class Parser:
             self.rule_equals,
             self.rule_mathematical_expression,
             self.rule_semicolon,
+        ],
+
+        "cond":[
+                self.rule_conditional_expression,
+                self.rule_function_block,
         ]
 }
         # explained in ast.txt
@@ -68,6 +73,9 @@ class Parser:
 
     def rule_equals(self,_,_value,_ind)-> tuple:
         return (True,1) if _value == EQUALS else (False,f"Expected a {EQUALS}")
+    
+    def rule_conditional_expression(self,keys,val,_ind) -> tuple:
+        pass
 
     def rule_mathematical_expression(self,keys,val,_ind) -> tuple:
         def evaluate(keys,val,_ind,workingNode=self.workingNode):
