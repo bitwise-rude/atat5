@@ -7,14 +7,14 @@ HEADER = '''
 ; Compiled through ATAT5
 ; Om Ganapati Namah
 ; Ganapatti Baba Moreya
-
 '''
 
 ############3 - Footer to the ASSEMBLY CODE
-FOOTER = '''HLT
+FOOTER = '''
+HLT
 '''
 
-### some function
+### some functions
 def to_hex(number:int)->str:
     # REturns a number in hex represetnation
     return hex(number)[2:].upper()
@@ -28,9 +28,15 @@ class Variable:
         self.value = value
 
     def generate_initial_code(self):
-        return f'''LXI H,0{to_hex(self.memory)}H
+        if type(self.value ) != Variable:
+            return f'''
+LXI H,0{to_hex(self.memory)}H
 MVI M,0{to_hex(int(self.value))}H
-'''
+    '''
+        return f'''
+LDA 0{to_hex(self.value.memory)}H
+STA 0{to_hex(self.memory)}H
+        '''
 
 ##########################3
 #   Main Code Gen Class
@@ -49,11 +55,21 @@ class CodeGen:
         # assembly code
         self.generated_code = ""
     
-    def _exists_variable(self,var:str):
+    def _variable_of(self,var:str):
         for vars in self._variables:
             if vars.name == var:
-                return True
+                return vars
         return False
+
+    def _eval_expression(self,node): # right now str and int but will be fixed for actual nodes also
+        try:
+            return int(node)
+        except ValueError:
+            _ =self._variable_of(node)
+            if _:
+                return _
+            else:
+                self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node}")
 
 
     def generate(self):
@@ -64,32 +80,11 @@ class CodeGen:
                 # see what type of node this is 
                 for node in nodes:
                     if node.name == "VAR_DEC":
-                        # varaible declearatoni
+                        _ = Variable(node.left,self._var_memory,self._eval_expression(node.right))
+                        self.generated_code += _.generate_initial_code()
 
-                        ## the left node could be a value or a variable
-                        try:
-                            # if the variable exist
-                            int(node.right)
-                            _ = Variable(node.left,self._var_memory,node.right)
-
-                            self.generated_code += _.generate_initial_code()
-
-                            self._variables.append(_)
-                            self._var_memory += 1
-
-                                
-                        except ValueError:
-
-                            if self._exists_variable(node.right):
-                                _ = Variable(node.left,self._var_memory,node.right)
-                                self.generated_code += _.generate_initial_code()
-                                self._variables.append(_)
-                                self._var_memory += 1
-
-                            else:
-                                self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f'{node.right} is not a variable')
-                    
-
+                        self._variables.append(_)
+                        self._var_memory += 1
                 break
         else: # no main function
             self.bipat_manager.show_error_and_exit(BipatSyntax,"No main Function Found")
