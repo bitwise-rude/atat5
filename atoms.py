@@ -11,6 +11,7 @@ BRACKETS ={
             "left_curly":"{"      ,
              "right_curly":"}"    ,
             }
+OPERATORS = {'add':'+'}
 EQUALS = "="
 SEMI = ";"
 NAMES = string.ascii_letters+"_" # anything except keyword is NAMES

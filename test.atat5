@@ -1,7 +1,7 @@
 fx main()
 {
     let year_birth = 6;
-    let current_year = 25;
-    
-    let year_current = current_year;
+    let age = 19;
+    let year_current = year_birth + age;
+   
 }

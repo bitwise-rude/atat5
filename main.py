@@ -30,5 +30,7 @@ tokens = tokenizer_obj.tokenize()
 parser_obj = paras.Parser(tokens,bipat_manager)
 AST = parser_obj.parse()
 
+print(AST)
+
 codegen_obj = codegen.CodeGen(AST,bipat_manager)
 codegen_obj.generate()

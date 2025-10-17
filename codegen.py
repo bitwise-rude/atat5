@@ -1,6 +1,6 @@
 ################## Generates CODE based on AST
 from errors import *
-from atoms import NUMBERS
+from atoms import OPERATORS
 
 #############3 - Header to the ASSEMBLY CODE
 HEADER = '''
@@ -10,9 +10,7 @@ HEADER = '''
 '''
 
 ############3 - Footer to the ASSEMBLY CODE
-FOOTER = '''
-HLT
-'''
+FOOTER = "HLT"
 
 ### some functions
 def to_hex(number:int)->str:
@@ -28,15 +26,11 @@ class Variable:
         self.value = value
 
     def generate_initial_code(self):
-        if type(self.value ) != Variable:
-            return f'''
-LXI H,0{to_hex(self.memory)}H
-MVI M,0{to_hex(int(self.value))}H
-    '''
-        return f'''
-LDA 0{to_hex(self.value.memory)}H
+            return f'''{self.value}
 STA 0{to_hex(self.memory)}H
-        '''
+
+'''
+
 
 ##########################3
 #   Main Code Gen Class
@@ -61,15 +55,26 @@ class CodeGen:
                 return vars
         return False
 
-    def _eval_expression(self,node): # right now str and int but will be fixed for actual nodes also
+    def _eval_expression(self,node,reg="A"): # right now str and int but will be fixed for actual nodes also
+        # will always be the right node
         try:
-            return int(node)
+            return f"MVI {reg},0{to_hex(int(node))}H"
         except ValueError:
             _ =self._variable_of(node)
-            if _:
-                return _
+            if _: # is a variable
+                if reg == "A":
+                    return f"LDA 0{to_hex(int(_.memory))}H"
+                else:
+                    return f"LXI H,{to_hex(int(_.memory))}\nMOV {reg},M"
             else:
                 self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node}")
+        except TypeError:
+            if node.name == 'add':
+                _ = self._eval_expression(node.left)
+                _footer = "\nADD B\nMOV B,A"
+
+            return  self._eval_expression(node.right,"B")+"\n"+_ +_footer
+        
 
 
     def generate(self):

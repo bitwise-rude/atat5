@@ -32,7 +32,7 @@ class Parser:
         "var_dec":[
             self.rule_var_dec_name,
             self.rule_equals,
-            self.rule_numbers,
+            self.rule_mathematical_expression,
             self.rule_semicolon,
         ]
 }
@@ -69,13 +69,34 @@ class Parser:
     def rule_equals(self,_,_value,_ind)-> tuple:
         return (True,1) if _value == EQUALS else (False,f"Expected a {EQUALS}")
 
-    def rule_numbers(self,keys,val,_ind) -> tuple:
-        # numbers can be variables too
-        if keys == "NUMBER" or keys == "NAME":
-            self.workingNode.right = val
-            return (True,1)
-        else:
-            return (False,f"Expected some value")
+    def rule_mathematical_expression(self,keys,val,_ind) -> tuple:
+        def evaluate(keys,val,_ind,workingNode=self.workingNode):
+            if self._tokens[_ind+1].type == "SEMI": # for single valued stuff
+                # this means this is just one thing
+                if keys == "NUMBER" or keys == "NAME":
+                    workingNode.right = val
+                    return (True,1),_ind
+                else:
+                    return (False,f"Expected some value"),_ind
+            else:
+                ## for an entire expression
+                if self._tokens[_ind+1].type == "OPERATOR":
+                    new_node = Node(self._tokens[_ind+1].val)
+                    new_node.left = val
+                    workingNode.right = new_node
+                    
+                    ## aghh
+                    keys = self._tokens[_ind + 2].type
+                    val = self._tokens[_ind + 2].val
+
+                    return evaluate(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node) 
+                else:
+                    return (False,f"Expected an operator"),_ind
+            
+        _,_indg = evaluate(keys,val,_ind)
+        return _[0],_indg - _ind + 1
+            
+        
     
     def rule_semicolon(self,keys,_,_ind) -> tuple:
         self.current_function_block.append(self.workingNode)
@@ -106,14 +127,15 @@ class Parser:
         # see if rule for a keyword is followed else it is a syntax error
         rules_index = 0
         while  rules_index < len(_rules):
-            token_keys = self._tokens[index+rules_index+1].type
-            token_values = self._tokens[index+rules_index+1].val
-            _line_no = self._tokens[index+rules_index+1].line_no
-            _index_no = self._tokens[index+rules_index+1].pos
+            token_keys = self._tokens[index+rules_index+1+_covered].type
+            token_values = self._tokens[index+rules_index+1+_covered].val
+            _line_no = self._tokens[index+rules_index+1+_covered].line_no
+            _index_no = self._tokens[index+rules_index+1+_covered].pos
 
             response = _rules[rules_index](token_keys,token_values,index+rules_index+1) # call the specific rule book function
             if response[0]:
                 rules_index += 1   
+
                 _covered += (response[1]-1)
 
             else:
@@ -140,7 +162,8 @@ class Parser:
             elif token_type == 'KEYWORD':
                 covered_ = self._parse_keyword(current)
                 current += covered_
-            
+            elif token_type == "OPERATOR":
+                self.error_manager.show_error_and_exit(SyntaxError,"Operator is not expected here")
             else:
                 self.error_manager.show_error_and_exit(SyntaxError,"NOT IMPLEMENTED")
         

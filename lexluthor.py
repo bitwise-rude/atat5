@@ -74,6 +74,12 @@ class Tokenizer:
                     self.tokens.append(_)
                     _index2 += 1
                 
+                # operations
+                elif checking_word in OPERATORS.values():
+                    _  = Token("OPERATOR",_line_no,_index,list(OPERATORS)[list(OPERATORS.values()).index(current_line[_index])])
+                    self.tokens.append(_)
+                    _index2 += 1 
+                
                 # equals to
                 elif checking_word == EQUALS:
                     _ = Token("EQUALS",_line_no,_index,EQUALS)
@@ -86,6 +92,7 @@ class Tokenizer:
                     self.tokens.append(_)
                     _index2 += 1
                 
+       
                 
                 else:
                     self.error_manager.show_error_and_exit(IdentifierUnknown,"Unknown Identifier",_line_no+1,_index+1)
