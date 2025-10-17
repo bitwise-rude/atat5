@@ -1,6 +1,6 @@
+let a = 5;
 fx main() {
     let birth_year = 6;
     let current_year = 25;
-    
-
+    let birth_year_again = birth_year;
 }

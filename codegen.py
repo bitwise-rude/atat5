@@ -1,5 +1,6 @@
 ################## Generates CODE based on AST
 from errors import *
+from atoms import NUMBERS
 
 #############3 - Header to the ASSEMBLY CODE
 HEADER = '''
@@ -47,6 +48,12 @@ class CodeGen:
 
         # assembly code
         self.generated_code = ""
+    
+    def _exists_variable(self,var:str):
+        for vars in self._variables:
+            if vars.name == var:
+                return True
+        return False
 
 
     def generate(self):
@@ -58,10 +65,31 @@ class CodeGen:
                 for node in nodes:
                     if node.name == "VAR_DEC":
                         # varaible declearatoni
-                        _ = Variable(node.left,self._var_memory,node.right)
-                        self.generated_code += _.generate_initial_code()
-                        self._variables.append(_)
-                        self._var_memory += 1
+
+                        ## the left node could be a value or a variable
+                        try:
+                            # if the variable exist
+                            int(node.right)
+                            _ = Variable(node.left,self._var_memory,node.right)
+
+                            self.generated_code += _.generate_initial_code()
+
+                            self._variables.append(_)
+                            self._var_memory += 1
+
+                                
+                        except ValueError:
+
+                            if self._exists_variable(node.right):
+                                _ = Variable(node.left,self._var_memory,node.right)
+                                self.generated_code += _.generate_initial_code()
+                                self._variables.append(_)
+                                self._var_memory += 1
+
+                            else:
+                                self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f'{node.right} is not a variable')
+                    
+
                 break
         else: # no main function
             self.bipat_manager.show_error_and_exit(BipatSyntax,"No main Function Found")

@@ -20,6 +20,10 @@ class BipatSyntax(Bipat):
     def __init__(self,  msg):
         super().__init__('BipatSyntax', msg)
 
+class BipatVariableNotFound(Bipat):
+    def __init__(self,  msg):
+        super().__init__("Variable Not Found", msg)
+
 class BipatManager():
     """ Manages Bipat"""
     def __init__(self,raw_code):

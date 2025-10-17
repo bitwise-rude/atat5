@@ -70,8 +70,12 @@ class Parser:
         return (True,1) if _value == EQUALS else (False,f"Expected a {EQUALS}")
 
     def rule_numbers(self,keys,val,_ind) -> tuple:
-        self.workingNode.right = val
-        return (True,1) if keys == "NUMBER" else (False, f"Expected a Number Literal")
+        # numbers can be variables too
+        if keys == "NUMBER" or keys == "NAME":
+            self.workingNode.right = val
+            return (True,1)
+        else:
+            return (False,f"Expected some value")
     
     def rule_semicolon(self,keys,_,_ind) -> tuple:
         self.current_function_block.append(self.workingNode)
