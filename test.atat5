@@ -1,8 +1,10 @@
 fx main()
 {
-    let year_birth = 10;
+    # this is a a comments
+    let year_birth = 10; # this is another comment
     let year_current = 25;
     
     let age = year_current + year_birth - year_birth;
+   # wow comments are cool
    
 }

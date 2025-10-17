@@ -4,13 +4,14 @@ import string
 
 
 ### Defining the atoms, if you wanna change something change the keys
-KEYWORDS = {'func_dec':'fx','var_dec':'let'} 
+KEYWORDS = {'func_dec':'fx','var_dec':'let','cond':'if'} 
 BRACKETS ={
              "left_small":"("   ,
              "right_small":")"   ,
             "left_curly":"{"      ,
              "right_curly":"}"    ,
             }
+COMMENT = "#"
 OPERATORS = {'add':'+','sub':'-'}
 EQUALS = "="
 SEMI = ";"

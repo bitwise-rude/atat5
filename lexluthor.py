@@ -62,6 +62,12 @@ class Tokenizer:
                     _ = Token("NUMBER",_line_no,_index,_temp_string)
                     self.tokens.append(_)
                 
+                # comment checking
+                elif checking_word == COMMENT:
+                    # don't care till a new line
+                    while current_line[_index2] != "\n":
+                        _index2 +=1
+                
                 # don't care for a space or new line
                 elif checking_word == " " or checking_word == "\n": 
                     _index2 += 1
