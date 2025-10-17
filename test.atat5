@@ -2,9 +2,9 @@ fx main()
 {
    let a = 4;
    let b = 4;
-   let  c= 6;
+   let c = 6;
 
-   if a==b{
+   if a=b {
     let c = 5;
    }
 

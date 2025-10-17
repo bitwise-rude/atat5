@@ -38,7 +38,6 @@ class Parser:
 
         "cond":[
                 self.rule_conditional_expression,
-                self.rule_function_block,
         ]
 }
         # explained in ast.txt
@@ -75,7 +74,31 @@ class Parser:
         return (True,1) if _value == EQUALS else (False,f"Expected a {EQUALS}")
     
     def rule_conditional_expression(self,keys,val,_ind) -> tuple:
-        pass
+        def evaluate(keys,val,_ind,workingNode=self.workingNode):
+            if self._tokens[_ind+1].type == "SEMI": # for single valued stuff
+                # this means this is just one thing
+                if keys == "NUMBER" or keys == "NAME":
+                    workingNode.right = val
+                    return (True,1),_ind
+                else:
+                    return (False,f"Expected some value"),_ind
+            else:
+                ## for an entire expression
+                if self._tokens[_ind+1].type == "CONDITIONAL_OPERATOR":
+                    new_node = Node(self._tokens[_ind+1].val)
+                    new_node.left = val
+                    workingNode.right = new_node
+                    
+                    ## aghh
+                    keys = self._tokens[_ind + 2].type
+                    val = self._tokens[_ind + 2].val
+
+                    return evaluate(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node) 
+                else:
+                    return (False,f"Expected an Conditional Operator"),_ind
+            
+        _,_indg = evaluate(keys,val,_ind)
+        return _[0],_indg - _ind + 1
 
     def rule_mathematical_expression(self,keys,val,_ind) -> tuple:
         def evaluate(keys,val,_ind,workingNode=self.workingNode):
