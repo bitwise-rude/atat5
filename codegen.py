@@ -65,13 +65,17 @@ class CodeGen:
                 if reg == "A":
                     return f"LDA 0{to_hex(int(_.memory))}H"
                 else:
-                    return f"LXI H,{to_hex(int(_.memory))}\nMOV {reg},M"
+                    return f"LXI H,0{to_hex(int(_.memory))}H\nMOV {reg},M"
             else:
                 self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node}")
         except TypeError:
             if node.name == 'add':
                 _ = self._eval_expression(node.left)
                 _footer = "\nADD B\nMOV B,A"
+            
+            elif node.name == 'sub':
+                _ = self._eval_expression(node.left)
+                _footer = "\nSUB B\nMOV B,A"
 
             return  self._eval_expression(node.right,"B")+"\n"+_ +_footer
         

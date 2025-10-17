@@ -2,9 +2,10 @@
 -- COOL COOL COOL
 
 ## Next thing to do
--- parser works now generate AST
+-- PRECEDENCE DOESN"T WORK HAVEN"T IMPLEMENTED IT SO DO IT NOW
 
 ## BUGS
+
 - Semicolon is checked in the new line too fix that ## FIXED
 
 ## STUFF
