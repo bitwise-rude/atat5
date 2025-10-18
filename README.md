@@ -6,7 +6,10 @@
 
 ## BUGS
 
-- Semicolon is checked in the new line too fix that ## FIXED
+- the lexer should check for names until there is a space, eg iff would also be regarded as if and f would produce an error, (no this is not the case), make multi word in the same palce
+as the keyword cehcker
+
+- variable also has false,true so make for that;
 
 ## STUFF
 - variable names or anything can be abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_ nothing except this

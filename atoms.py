@@ -15,6 +15,7 @@ COMMENT = "#"
 OPERATORS = {'add':'+','sub':'-'}
 MULTIWORD = {"EQUALS_TO":("CONDITIONAL_OPERATOR","==")}
 EQUALS = "="
+BOOLEANS={"true":"true",'false':'false'}
 SEMI = ";"
 NAMES = string.ascii_letters+"_" # anything except keyword is NAMES
 NUMBERS = "0123456789"

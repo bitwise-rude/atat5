@@ -39,7 +39,7 @@ class Tokenizer:
 
                 checking_word = current_line[_index]
 
-                # checking multi letter stuff
+                # # checking multi letter stuff
                 found_ = False
                 for k,v in MULTIWORD.items():
                     ## for two letter only
@@ -53,6 +53,7 @@ class Tokenizer:
                 
                 if found_:
                     _index = _index2
+                   
                     continue
 
                 elif checking_word in NAMES:
@@ -65,6 +66,10 @@ class Tokenizer:
         
                     if _temp_string in KEYWORDS.values():
                         _=Token("KEYWORD",_line_no,_index,list(KEYWORDS)[list(KEYWORDS.values()).index(_temp_string)])
+                        self.tokens.append(_)
+                    ##boolean
+                    elif _temp_string in BOOLEANS.values():
+                        _ = _=Token("NUMBER",_line_no,_index,"1" if list(BOOLEANS)[list(BOOLEANS.values()).index(_temp_string)]== 'true' else 0)
                         self.tokens.append(_)
                     else:
                         _ = Token("NAME",_line_no,_index,_temp_string)
@@ -126,7 +131,7 @@ class Tokenizer:
     
                 _index = _index2
         
-
+        print(self.tokens)
         return self.tokens
 
 

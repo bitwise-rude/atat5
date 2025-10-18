@@ -38,6 +38,7 @@ class Parser:
 
         "cond":[
                 self.rule_conditional_expression,
+                
         ]
 }
         # explained in ast.txt
@@ -84,7 +85,7 @@ class Parser:
                     return (False,f"Expected some value"),_ind
             else:
                 ## for an entire expression
-                if self._tokens[_ind+1].type == "CONDITIONAL_OPERATOR":
+                if self._tokens[_ind+1].type == "OPERATOR":
                     new_node = Node(self._tokens[_ind+1].val)
                     new_node.left = val
                     workingNode.right = new_node
@@ -95,7 +96,7 @@ class Parser:
 
                     return evaluate(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node) 
                 else:
-                    return (False,f"Expected an Conditional Operator"),_ind
+                    return (False,f"Expected an operator"),_ind
             
         _,_indg = evaluate(keys,val,_ind)
         return _[0],_indg - _ind + 1
@@ -166,7 +167,6 @@ class Parser:
             response = _rules[rules_index](token_keys,token_values,index+rules_index+1) # call the specific rule book function
             if response[0]:
                 rules_index += 1   
-
                 _covered += (response[1]-1)
 
             else:
