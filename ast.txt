@@ -11,3 +11,5 @@ each member list will be a function
 
 expss = expression in side a function, they are gonna be another lists
 exxps = NODES
+
+blocks are also stored the same way with prefix BLOCK_1  and BLOCK_2 and so on 

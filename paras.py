@@ -20,6 +20,9 @@ class Parser:
         self._tokens = tokens
         self.error_manager = error_manager
 
+        ## block counter will be changed later
+        self._block_counter = 0
+
         ## RULES
         self.keyword_rules = {
     "func_dec":[
@@ -38,7 +41,7 @@ class Parser:
 
         "cond":[
                 self.rule_conditional_expression,
-                
+                self.rule_if_block,
         ]
 }
         # explained in ast.txt
@@ -76,13 +79,15 @@ class Parser:
     
     def rule_conditional_expression(self,keys,val,_ind) -> tuple:
         def evaluate(keys,val,_ind,workingNode=self.workingNode):
-            if self._tokens[_ind+1].type == "SEMI": # for single valued stuff
+            if self._tokens[_ind+1].val == "left_curly": # for single valued stuff
                 # this means this is just one thing
                 if keys == "NUMBER" or keys == "NAME":
+                    workingNode = Node('IF_STATEMENT')
                     workingNode.right = val
+                    self.current_function_block.append(workingNode)
                     return (True,1),_ind
                 else:
-                    return (False,f"Expected some value"),_ind
+                    return (False,f"Expected some Condition"),_ind
             else:
                 ## for an entire expression
                 if self._tokens[_ind+1].type == "OPERATOR":
@@ -133,6 +138,16 @@ class Parser:
     def rule_semicolon(self,keys,_,_ind) -> tuple:
         self.current_function_block.append(self.workingNode)
         return (True,1) if keys == "SEMI" else (False, f"Expected a {SEMI}")
+    
+    def rule_if_block(self,_,_value,_ind) -> tuple:
+        if _value == 'left_curly':
+            new = self.parse(_ind + 1, till = 'right_curly')
+            if new == -1:
+                return (False,f'Expected to Close the if statement using a {BRACKETS['right_curly']}')
+            self.current_function_block.append(Node('END_IF'))
+            return (True,new-_ind)
+        else:
+            return (False,"IF Blocks MUST start with '{'")
     
     def rule_function_block(self,_,_value,_ind)-> tuple:
         if _value == "left_curly": # blocks start with curly 

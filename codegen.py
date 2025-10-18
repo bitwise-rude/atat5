@@ -43,8 +43,14 @@ class CodeGen:
         # variables start storing from
         self._var_memory = 0xE000
 
+        # label index
+        self._label_index = 0
+
         # Variables are stored as list
         self._variables = [] 
+
+        # residues are used by block enders
+        self._residue = ""
 
         # assembly code
         self.generated_code = ""
@@ -78,6 +84,19 @@ class CodeGen:
                 _footer = "\nSUB B\nMOV B,A"
 
             return  self._eval_expression(node.right,"B")+"\n"+_ +_footer
+    
+    def _eval_conditional(self,node,reg="A"):
+        try:
+            return f"MVI {reg},0{to_hex(int(node))}H"
+        except ValueError:
+            _ =self._variable_of(node)
+            if _: # is a variable
+                if reg == "A":
+                    return f"LDA 0{to_hex(int(_.memory))}H"
+                else:
+                    return f"LXI H,0{to_hex(int(_.memory))}H\nMOV {reg},M"
+            else:
+                self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node}")
         
 
 
@@ -88,12 +107,21 @@ class CodeGen:
                 # main function executes from here after
                 # see what type of node this is 
                 for node in nodes:
+                   
                     if node.name == "VAR_DEC":
                         _ = Variable(node.left,self._var_memory,self._eval_expression(node.right))
                         self.generated_code += _.generate_initial_code()
 
                         self._variables.append(_)
                         self._var_memory += 1
+                       
+                    elif node.name == "IF_STATEMENT":
+                        self.generated_code += f"LABEL{self._label_index}:\n"
+                        self._residue = self._eval_conditional(node.right)
+                    
+                    elif node.name == "END_IF":
+                        pass
+                       
                 break
         else: # no main function
             self.bipat_manager.show_error_and_exit(BipatSyntax,"No main Function Found")

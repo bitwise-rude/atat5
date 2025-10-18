@@ -1,8 +1,12 @@
 fx main()
 {
-   let a = true;
+   let a = false;
    let b = 4;
    let c = 6;
+
+   if a{
+      let d = 5;
+   }
 
 
 }

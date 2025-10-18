@@ -69,7 +69,7 @@ class Tokenizer:
                         self.tokens.append(_)
                     ##boolean
                     elif _temp_string in BOOLEANS.values():
-                        _ = _=Token("NUMBER",_line_no,_index,"1" if list(BOOLEANS)[list(BOOLEANS.values()).index(_temp_string)]== 'true' else 0)
+                        _ = _=Token("NUMBER",_line_no,_index,"1" if list(BOOLEANS)[list(BOOLEANS.values()).index(_temp_string)]== 'true' else "0")
                         self.tokens.append(_)
                     else:
                         _ = Token("NAME",_line_no,_index,_temp_string)

@@ -9,7 +9,13 @@
 - the lexer should check for names until there is a space, eg iff would also be regarded as if and f would produce an error, (no this is not the case), make multi word in the same palce
 as the keyword cehcker
 
-- variable also has false,true so make for that;
+- for checking for mathematical check end for non number character not semi colon and for booleans too
+
+- block counter? what a shame change it?
+
+- if statement should make a node not conditional evaluator
+
+
 
 ## STUFF
 - variable names or anything can be abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_ nothing except this
@@ -29,5 +35,6 @@ as the keyword cehcker
 
 ## TODO
 - make error system more robust by indicating the line where error occured
+- maybe make after label stuff indent to improve looks
 -   make thing for floats
 
