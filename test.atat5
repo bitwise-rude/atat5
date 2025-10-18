@@ -4,7 +4,7 @@ fx main()
    let b = 4;
    let c = 6;
 
-   if a{
+   if true{
       let d = 5;
    }
 

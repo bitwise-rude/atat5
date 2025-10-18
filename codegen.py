@@ -64,7 +64,7 @@ class CodeGen:
     def _eval_expression(self,node,reg="A"): # right now str and int but will be fixed for actual nodes also
         # will always be the right node
         try:
-            return f"MVI {reg},0{to_hex(int(node))}H"
+            return f"MVI {reg},0{to_hex(int(node))}H\n"
         except ValueError:
             _ =self._variable_of(node)
             if _: # is a variable
@@ -85,9 +85,9 @@ class CodeGen:
 
             return  self._eval_expression(node.right,"B")+"\n"+_ +_footer
     
-    def _eval_conditional(self,node,reg="A"):
+    def _eval_conditional(self,node,label):
         try:
-            return f"MVI {reg},0{to_hex(int(node))}H"
+            return f"MVI A,01H\nCPI 0{to_hex(int(node))}H\nJNC {label}\n"
         except ValueError:
             _ =self._variable_of(node)
             if _: # is a variable
@@ -116,11 +116,12 @@ class CodeGen:
                         self._var_memory += 1
                        
                     elif node.name == "IF_STATEMENT":
-                        self.generated_code += f"LABEL{self._label_index}:\n"
-                        self._residue = self._eval_conditional(node.right)
-                    
+                        self.generated_code += self._eval_conditional(node.right,f'LABEL{self._label_index}')
+                        
                     elif node.name == "END_IF":
-                        pass
+                        self.generated_code += f"\nLABEL{self._label_index}:\n"
+                        self._label_index += 1
+                    
                        
                 break
         else: # no main function

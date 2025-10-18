@@ -37,4 +37,5 @@ as the keyword cehcker
 - make error system more robust by indicating the line where error occured
 - maybe make after label stuff indent to improve looks
 -   make thing for floats
+- nested if wont work
 
