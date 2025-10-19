@@ -1,4 +1,4 @@
 fx main(){
    # this is my main function
-   let a = 5;
+   ^ a = 5;
 }

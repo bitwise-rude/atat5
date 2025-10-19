@@ -31,7 +31,10 @@ class BipatManager():
     
     def show_error_and_exit(self,error_kind,msg:str,line_no=0,word_no=0):
         print(error_kind(msg))
-        print(f"ERROR AT {line_no}:{word_no}")
+        print("\n")
+        print(self._raw_code[line_no])
+        print(" " * (len(self._raw_code)-word_no)+"^^"*2)
+        print(f"ERROR AT LINE:POS {line_no+1}:{word_no+1}")
 
         quit()
 
