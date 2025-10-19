@@ -1,12 +1,4 @@
-fx main()
-{
-   let a = false;
-   let b = 4;
-   let c = 6;
-
-   if true{
-      let d = 5;
-   }
-
-
+fx main(){
+   # this is my main function
+   let a = 5;
 }
