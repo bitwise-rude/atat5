@@ -115,13 +115,13 @@ class Tokenizer:
                 
                 # equals to
                 elif checking_letter == EQUALS:
-                    _ = Token("EQUALS",_line_no,_pos,EQUALS)
+                    _ = Token("EQUALS",_line_no,_pos,"EQUALS")
                     self.tokens.append(_)
                     _pos += 1
 
                 # semi colon
                 elif checking_letter == SEMI:
-                    _ = Token("SEMI",_line_no,_pos,SEMI)
+                    _ = Token("SEMI",_line_no,_pos,"SEMI")
                     self.tokens.append(_)
                     _pos += 1
                 

@@ -3,8 +3,7 @@ fx main(){
 
     let b = 5+6;
 
-    if false{
-        let c = 7+8;
+    if 2+3+6+8+7{
     }
 
 }

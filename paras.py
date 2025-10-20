@@ -50,6 +50,15 @@ class Parser:
         self.workingNode = None
 
 
+    def _get_tokens_till(self,_start,_till) -> tuple[list,int]:
+        # stating from index _start, returns all the token till value "_till"
+        _list = []
+        for i in range(_start,len(self._tokens)):
+            if self._tokens[i].val == _till:
+                return (_list,i)
+            else:
+                _list.append(self._tokens[i])
+        return None
     
     # definition of various rules returns a tuple (True,no_of_tokens to skip)
     def rule_fn_name(self,_key,_value,_ind) -> tuple:
@@ -73,37 +82,21 @@ class Parser:
         return (True,1) if _value == "right_small" else (False,f"Expected a '{BRACKETS["right_small"]}'")
 
     def rule_equals(self,_,_value,_ind)-> tuple:
-        return (True,1) if _value == EQUALS else (False,f"Expected a {EQUALS}")
+        return (True,1) if _value == "EQUALS" else (False,f"Expected a {EQUALS}")
     
     def rule_if_statement(self,keys,val,_ind) -> tuple:
         _ = Node('COND')
         _.left = 'if'
         self.workingNode = _
 
-        _,_indg = self.evaluate_conditional_expression(keys,val,_ind,evaluate_till="left_curly")
+        _,_indg = self.evaluate_mathematical_expression(keys,val,_ind,evaluate_till="left_curly")
         self.current_function_block.append(self.workingNode)
-        return _[0],_indg - _ind + 1
-      
-
-    def evaluate_conditional_expression(self,keys,val,_ind,workingNode=None,evaluate_till="SEMI"):
-        workingNode = self.workingNode if not workingNode else workingNode
         
-        if self._tokens[_ind+1].val ==evaluate_till:
-            if keys == "NUMBER" or keys == "NAME":
-                workingNode.right = val
-                return (True,1),_ind
-            else:
-                return (False,f"Expected some value"),_ind
-            
-        else:
-            if self._tokens[_ind+1].type == "CONDITIONAL_OPERATOR":
-                return (False, f'Not Implemented'),_ind
-
-
+        return _[0],_indg - _ind + 1
     
     def evaluate_mathematical_expression(self,keys,val,_ind,workingNode=None,evaluate_till="SEMI"):
         workingNode = self.workingNode if not workingNode else workingNode
-        if self._tokens[_ind+1].type ==evaluate_till: # for single valued stuff
+        if self._tokens[_ind+1].val == evaluate_till: # for single valued stuff
             # this means this is just one thing
             if keys == "NUMBER" or keys == "NAME":
                 workingNode.right = val
@@ -122,7 +115,7 @@ class Parser:
                 keys = self._tokens[_ind + 2].type
                 val = self._tokens[_ind + 2].val
 
-                return self.evaluate_mathematical_expression(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node) 
+                return self.evaluate_mathematical_expression(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node,evaluate_till=evaluate_till) 
             else:
                 return (False,f"Expected an operator"),_ind
 
@@ -137,8 +130,7 @@ class Parser:
     
     def rule_if_block(self,_,_value,_ind) -> tuple:
         if _value == 'left_curly':
-            new = self.parse(_ind + 1, till = 'right_curly')
-
+            new = self.parse(_ind + 1, till = 'right_curly') # parse after the curly bracket
             if new == -1:
                 return (False,f'Expected to Close the if statement using a {BRACKETS['right_curly']}')
             self.current_function_block.append(Node('END_IF'))
@@ -147,9 +139,11 @@ class Parser:
             return (False,"IF Blocks MUST start with '{'")
     
     def rule_function_block(self,_,_value,_ind)-> tuple:
+        
         if _value == "left_curly": # blocks start with curly 
             ## Now Parse after left_curly till the next right_curly
             new = self.parse(_ind+1,till="right_curly") # parse after the curly bracket
+            
             self.AST.append((self.current_working_function,self.current_function_block))
             if new == -1:
                 return (False,f'Expected to Close the function using a {BRACKETS['right_curly']}')
@@ -174,7 +168,7 @@ class Parser:
             _line_no = self._tokens[index+rules_index+1+_covered].line_no
             _index_no = self._tokens[index+rules_index+1+_covered].pos
 
-            response = _rules[rules_index](token_keys,token_values,index+rules_index+1) # call the specific rule book function
+            response = _rules[rules_index](token_keys,token_values,index+rules_index+1+_covered) # call the specific rule book function
             if response[0]:
                 rules_index += 1   
                 _covered += (response[1]-1)
@@ -194,7 +188,6 @@ class Parser:
         while current < len(self._tokens):
             current_token = self._tokens[current]
 
-            print(till,current_token.val)
             if till and (till == current_token.val): # useful for blocks
                 current += 1 
                 return current
@@ -203,7 +196,8 @@ class Parser:
                 covered_ = self._parse_keyword(current)
                 current += covered_
             else:
-                self.error_manager.show_error_and_exit(BipatSyntax,"Syntax Error",current_token.line_no,current_token.pos)
+                print(current_token.type,current_token.val)
+                self.error_manager.show_error_and_exit(BipatSyntax,"Syntax vv Error",current_token.line_no,current_token.pos)
         
         # if top level didn't find till
         if till:

@@ -85,7 +85,8 @@ class CodeGen:
             return  self._eval_expression(node.right,"B")+"\n"+_ +_footer
     
     def _eval_conditional(self,node,label):
-            return f"MVI A,00H\nCPI 0{to_hex(int(node))}H\nJC {label}"
+            _ = self._eval_expression(node,reg="B")## will be on reg B
+            return _ + f"\nMVI A,00H\nCMP B\nJNC {label}"
         
 
     def generate(self):
