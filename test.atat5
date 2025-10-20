@@ -1,4 +1,8 @@
 fx main(){
-   # this is my main function
-   ^ a = 5;
+    let a = 6;
+
+    let b = 5+6;
+
+    if true{}
+
 }

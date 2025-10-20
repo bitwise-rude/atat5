@@ -20,9 +20,6 @@ class Parser:
         self._tokens = tokens
         self.error_manager = error_manager
 
-        ## block counter will be changed later
-        self._block_counter = 0
-
         ## RULES
         self.keyword_rules = {
     "func_dec":[
@@ -35,12 +32,12 @@ class Parser:
         "var_dec":[
             self.rule_var_dec_name,
             self.rule_equals,
-            self.rule_mathematical_expression,
+            self.rule_var_dec,
             self.rule_semicolon,
         ],
 
         "cond":[
-                self.rule_conditional_expression,
+                self.rule_if_statement,
                 self.rule_if_block,
         ]
 }
@@ -48,7 +45,8 @@ class Parser:
         self.AST = []
 
         self.current_function_block = []
-        self.current_working_function = ""
+        self.current_working_function = "1" # TODO: outside world
+
         self.workingNode = None
 
 
@@ -77,63 +75,61 @@ class Parser:
     def rule_equals(self,_,_value,_ind)-> tuple:
         return (True,1) if _value == EQUALS else (False,f"Expected a {EQUALS}")
     
-    def rule_conditional_expression(self,keys,val,_ind) -> tuple:
-        def evaluate(keys,val,_ind,workingNode=self.workingNode):
-            if self._tokens[_ind+1].val == "left_curly": # for single valued stuff
-                # this means this is just one thing
-                if keys == "NUMBER" or keys == "NAME":
-                    workingNode = Node('IF_STATEMENT')
-                    workingNode.right = val
-                    self.current_function_block.append(workingNode)
-                    return (True,1),_ind
-                else:
-                    return (False,f"Expected some Condition"),_ind
-            else:
-                ## for an entire expression
-                if self._tokens[_ind+1].type == "OPERATOR":
-                    new_node = Node(self._tokens[_ind+1].val)
-                    new_node.left = val
-                    workingNode.right = new_node
-                    
-                    ## aghh
-                    keys = self._tokens[_ind + 2].type
-                    val = self._tokens[_ind + 2].val
+    def rule_if_statement(self,keys,val,_ind) -> tuple:
+        _ = Node('COND')
+        _.left = 'if'
+        self.workingNode = _
 
-                    return evaluate(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node) 
-                else:
-                    return (False,f"Expected an operator"),_ind
-            
-        _,_indg = evaluate(keys,val,_ind)
+        _,_indg = self.evaluate_conditional_expression(keys,val,_ind,evaluate_till="left_curly")
+        self.current_function_block.append(self.workingNode)
         return _[0],_indg - _ind + 1
+      
 
-    def rule_mathematical_expression(self,keys,val,_ind) -> tuple:
-        def evaluate(keys,val,_ind,workingNode=self.workingNode):
-            if self._tokens[_ind+1].type == "SEMI": # for single valued stuff
-                # this means this is just one thing
-                if keys == "NUMBER" or keys == "NAME":
-                    workingNode.right = val
-                    return (True,1),_ind
-                else:
-                    return (False,f"Expected some value"),_ind
-            else:
-                ## for an entire expression
-                if self._tokens[_ind+1].type == "OPERATOR":
-                    new_node = Node(self._tokens[_ind+1].val)
-                    new_node.left = val
-                    workingNode.right = new_node
-                    
-                    ## aghh
-                    keys = self._tokens[_ind + 2].type
-                    val = self._tokens[_ind + 2].val
-
-                    return evaluate(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node) 
-                else:
-                    return (False,f"Expected an operator"),_ind
-            
-        _,_indg = evaluate(keys,val,_ind)
-        return _[0],_indg - _ind + 1
-            
+    def evaluate_conditional_expression(self,keys,val,_ind,workingNode=None,evaluate_till="SEMI"):
+        workingNode = self.workingNode if not workingNode else workingNode
         
+        if self._tokens[_ind+1].val ==evaluate_till:
+            if keys == "NUMBER" or keys == "NAME":
+                workingNode.right = val
+                return (True,1),_ind
+            else:
+                return (False,f"Expected some value"),_ind
+            
+        else:
+            if self._tokens[_ind+1].type == "CONDITIONAL_OPERATOR":
+                return (False, f'Not Implemented'),_ind
+
+
+    
+    def evaluate_mathematical_expression(self,keys,val,_ind,workingNode=None,evaluate_till="SEMI"):
+        workingNode = self.workingNode if not workingNode else workingNode
+        if self._tokens[_ind+1].type ==evaluate_till: # for single valued stuff
+            # this means this is just one thing
+            if keys == "NUMBER" or keys == "NAME":
+                workingNode.right = val
+                return (True,1),_ind
+            else:
+                return (False,f"Expected some value"),_ind
+
+        else:
+                ## for an entire expression
+            if self._tokens[_ind+1].type == "OPERATOR":
+                new_node = Node(self._tokens[_ind+1].val)
+                new_node.left = val
+                workingNode.right = new_node
+                    
+                ## aghh
+                keys = self._tokens[_ind + 2].type
+                val = self._tokens[_ind + 2].val
+
+                return self.evaluate_mathematical_expression(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node) 
+            else:
+                return (False,f"Expected an operator"),_ind
+
+    def rule_var_dec(self,keys,val,_ind) -> tuple:    
+        _,_indg = self.evaluate_mathematical_expression(keys,val,_ind)
+        return _[0],_indg - _ind + 1
+            
     
     def rule_semicolon(self,keys,_,_ind) -> tuple:
         self.current_function_block.append(self.workingNode)
@@ -142,6 +138,7 @@ class Parser:
     def rule_if_block(self,_,_value,_ind) -> tuple:
         if _value == 'left_curly':
             new = self.parse(_ind + 1, till = 'right_curly')
+
             if new == -1:
                 return (False,f'Expected to Close the if statement using a {BRACKETS['right_curly']}')
             self.current_function_block.append(Node('END_IF'))
@@ -165,9 +162,7 @@ class Parser:
     
     def _parse_keyword(self,index):
         '''Parses the keyword according to the grammar'''
-        _keyword_obj = self._tokens[index]
-        _keyword = _keyword_obj.val
-
+        _keyword = self._tokens[index].val
         _rules = self.keyword_rules[_keyword] 
 
         _covered = 0 # REMEMBER : minimum tokens to skip will be rules
@@ -185,7 +180,7 @@ class Parser:
                 _covered += (response[1]-1)
 
             else:
-                self.error_manager.show_error_and_exit(BipatSyntax,response[1],_line_no+1,_index_no+1)
+                self.error_manager.show_error_and_exit(BipatSyntax,response[1],_line_no,_index_no)
                 rules_index +=1
         return _covered + rules_index +1 
 
@@ -196,22 +191,19 @@ class Parser:
         # current means from where to start (tokens list) 
         # to maintain recursivity -> till, parse till what 
 
-
         while current < len(self._tokens):
-            token_type = self._tokens[current].type
-            token_type_value = (self._tokens[current]).val
-            
-            if till and (till == token_type_value): # useful for blocks
+            current_token = self._tokens[current]
+
+            print(till,current_token.val)
+            if till and (till == current_token.val): # useful for blocks
                 current += 1 
                 return current
 
-            elif token_type == 'KEYWORD':
+            elif current_token.type == 'KEYWORD':
                 covered_ = self._parse_keyword(current)
                 current += covered_
-            elif token_type == "OPERATOR":
-                self.error_manager.show_error_and_exit(SyntaxError,"Operator is not expected here")
             else:
-                self.error_manager.show_error_and_exit(SyntaxError,"NOT IMPLEMENTED")
+                self.error_manager.show_error_and_exit(BipatSyntax,"Syntax Error",current_token.line_no,current_token.pos)
         
         # if top level didn't find till
         if till:

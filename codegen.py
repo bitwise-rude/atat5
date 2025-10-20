@@ -10,7 +10,7 @@ HEADER = '''
 '''
 
 ############3 - Footer to the ASSEMBLY CODE
-FOOTER = "HLT"
+FOOTER = "\nHLT"
 
 ### some functions
 def to_hex(number:int)->str:
@@ -26,9 +26,8 @@ class Variable:
         self.value = value
 
     def generate_initial_code(self):
-            return f'''{self.value}
+            return f'''\n{self.value}
 STA 0{to_hex(self.memory)}H
-
 '''
 
 
@@ -64,7 +63,7 @@ class CodeGen:
     def _eval_expression(self,node,reg="A"): # right now str and int but will be fixed for actual nodes also
         # will always be the right node
         try:
-            return f"MVI {reg},0{to_hex(int(node))}H\n"
+            return f"MVI {reg},0{to_hex(int(node))}H"
         except ValueError:
             _ =self._variable_of(node)
             if _: # is a variable
@@ -86,19 +85,8 @@ class CodeGen:
             return  self._eval_expression(node.right,"B")+"\n"+_ +_footer
     
     def _eval_conditional(self,node,label):
-        try:
-            return f"MVI A,01H\nCPI 0{to_hex(int(node))}H\nJNC {label}\n"
-        except ValueError:
-            _ =self._variable_of(node)
-            if _: # is a variable
-                if reg == "A":
-                    return f"LDA 0{to_hex(int(_.memory))}H"
-                else:
-                    return f"LXI H,0{to_hex(int(_.memory))}H\nMOV {reg},M"
-            else:
-                self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node}")
+            return f"MVI A,01H\nCPI 0{to_hex(int(node))}H\nJC {label}"
         
-
 
     def generate(self):
         # check for the main function
@@ -115,8 +103,9 @@ class CodeGen:
                         self._variables.append(_)
                         self._var_memory += 1
                        
-                    elif node.name == "IF_STATEMENT":
-                        self.generated_code += self._eval_conditional(node.right,f'LABEL{self._label_index}')
+                    elif node.name == "COND":
+                        if node.left == "if":
+                            self.generated_code += "\n"+self._eval_conditional(node.right,f'LABEL{self._label_index}') + "\n"
                         
                     elif node.name == "END_IF":
                         self.generated_code += f"\nLABEL{self._label_index}:\n"

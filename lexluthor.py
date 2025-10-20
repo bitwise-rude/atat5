@@ -129,7 +129,7 @@ class Tokenizer:
                 else:
                     self.error_manager.show_error_and_exit(IdentifierUnknown,"Unknown Identifier",_line_no,_pos)
     
-        
+
         return self.tokens
 
 
