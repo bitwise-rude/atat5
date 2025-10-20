@@ -75,18 +75,29 @@ class CodeGen:
                 self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node}")
         except TypeError:
             if node.name == 'add':
-                _ = self._eval_expression(node.left)
+                _ = self._eval_expression(node.left,reg=reg)
                 _footer = "\nADD B\nMOV B,A"
             
             elif node.name == 'sub':
-                _ = self._eval_expression(node.left)
+                _ = self._eval_expression(node.left,reg=reg)
                 _footer = "\nSUB B\nMOV B,A"
+            
+            elif node.name == 'EQUALS_TO':
+                _ = self._eval_expression(node.left,reg=reg)
+                _footer = "\nCMP B\n"
+              
+
+
+            
+            else:
+                self.bipat_manager.show_error_and_exit(BipatSyntax,"Invalid Expression Node")
 
             return  self._eval_expression(node.right,"B")+"\n"+_ +_footer
     
     def _eval_conditional(self,node,label):
             _ = self._eval_expression(node,reg="B")## will be on reg B
             return _ + f"\nMVI A,00H\nCMP B\nJNC {label}"
+            
         
 
     def generate(self):

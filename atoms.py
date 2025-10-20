@@ -13,7 +13,7 @@ BRACKETS ={
             }
 COMMENT = "#"
 OPERATORS = {'add':'+','sub':'-'}
-MULTIWORD = {"EQUALS_TO":("CONDITIONAL_OPERATOR","==")}
+MULTIWORD = {"EQUALS_TO":("OPERATOR","==")}
 EQUALS = "="
 BOOLEANS={"true":"true",'false':'false'}
 SEMI = ";"
