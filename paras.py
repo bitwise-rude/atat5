@@ -178,6 +178,21 @@ class Parser:
                 rules_index +=1
         return _covered + rules_index +1 
 
+    def _parse_names(self,index):
+        ## like a = 5; after assigning a variable
+        _ = Node("VAR_ASSIGN")
+        self.workingNode = _
+        _.left = self._tokens[index].val # variable name
+
+        # next shold be equals
+        if self._tokens[index+1].val != "EQUALS":
+            self.error_manager.show_error_and_exit(BipatSyntax,"Expected an Equals Sign",self._tokens[index+1].line_no,self._tokens[index+1].pos)
+            return
+
+        _,_indg = self.evaluate_mathematical_expression(self._tokens[index+2].type,self._tokens[index+2].val,index+2)
+        self.current_function_block.append(self.workingNode)
+        return _indg - index + 2 # for semi
+
     def parse(self,current=0,till=None):
         # parsing different keywords
         # keywords are parsed as stuff that always follow a 
@@ -194,6 +209,9 @@ class Parser:
 
             elif current_token.type == 'KEYWORD':
                 covered_ = self._parse_keyword(current)
+                current += covered_
+            elif current_token.type == "NAME":
+                covered_ = self._parse_names(current)
                 current += covered_
             else:
                 print(current_token.type,current_token.val)

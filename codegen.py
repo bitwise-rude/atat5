@@ -65,14 +65,14 @@ class CodeGen:
     def _eval_expression(self,node,reg="A"): # right now str and int but will be fixed for actual nodes also
         # will always be the right node
         try:
-            return f"MVI {reg},0{to_hex(int(node))}H"
+            return f"\nMVI {reg},0{to_hex(int(node))}H"
         except ValueError:
             _ =self._variable_of(node)
             if _: # is a variable
                 if reg == "A":
-                    return f"LDA 0{to_hex(int(_.memory))}H"
+                    return f"\nLDA 0{to_hex(int(_.memory))}H"
                 else:
-                    return f"LXI H,0{to_hex(int(_.memory))}H\nMOV {reg},M"
+                    return f"\nLXI H,0{to_hex(int(_.memory))}H\nMOV {reg},M"
             else:
                 self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node}")
         except TypeError:
@@ -86,9 +86,10 @@ class CodeGen:
             
             elif node.name == 'EQUALS_TO':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = f"\nCMP B\nJZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                _footer = f"\nCMP B\nJZ TEMP{self._temp_label_index}\nMVI A,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI A,01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
-              
+            
+            
 
 
             
@@ -110,13 +111,23 @@ class CodeGen:
                 # main function executes from here after
                 # see what type of node this is 
                 for node in nodes:
-                   
                     if node.name == "VAR_DEC":
                         _ = Variable(node.left,self._var_memory,self._eval_expression(node.right))
                         self.generated_code += _.generate_initial_code()
 
                         self._variables.append(_)
                         self._var_memory += 1
+                    
+                    elif node.name == "VAR_ASSIGN":
+                        wanna_assign = self._variable_of(node.left)
+                        if wanna_assign:
+                            _ = self._eval_expression(node.right)
+                            # self.generated_code+=wanna_assign.generate_initial_code()
+                            self.generated_code += _
+                            self.generated_code += f"\nSTA 0{to_hex(int(wanna_assign.memory))}H\n"
+                        else:
+                            self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node.left}")
+                            return
                        
                     elif node.name == "COND":
                         if node.left == "if":

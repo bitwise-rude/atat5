@@ -1,5 +1,4 @@
 fx main(){
-    let a = false;
-    let a = 2==2;
-
+    let counter = 0;
+    counter = 5+6;
 }
