@@ -44,6 +44,8 @@ class CodeGen:
 
         # label index
         self._label_index = 0
+        self._temp_label_index = 0
+
 
         # Variables are stored as list
         self._variables = [] 
@@ -84,7 +86,8 @@ class CodeGen:
             
             elif node.name == 'EQUALS_TO':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = "\nCMP B\n"
+                _footer = f"\nCMP B\nJZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                self._temp_label_index += 2
               
 
 
@@ -95,7 +98,7 @@ class CodeGen:
             return  self._eval_expression(node.right,"B")+"\n"+_ +_footer
     
     def _eval_conditional(self,node,label):
-            _ = self._eval_expression(node,reg="B")## will be on reg B
+            _ = self._eval_expression(node)
             return _ + f"\nMVI A,00H\nCMP B\nJNC {label}"
             
         

@@ -1,9 +1,5 @@
 fx main(){
-    let a = 6;
-
-    let b = 5+6;
-
-    if 2==2{
-    }
+    let a = false;
+    let a = 2==2;
 
 }
