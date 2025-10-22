@@ -45,6 +45,7 @@ class CodeGen:
         # label index
         self._label_index = 0
         self._temp_label_index = 0
+        self.loop_counter = 0 # later combine to single
 
 
         # Variables are stored as list
@@ -55,6 +56,8 @@ class CodeGen:
 
         # assembly code
         self.generated_code = ""
+
+        
     
     def _variable_of(self,var:str):
         for vars in self._variables:
@@ -86,7 +89,7 @@ class CodeGen:
             
             elif node.name == 'EQUALS_TO':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = f"\nCMP B\nJZ TEMP{self._temp_label_index}\nMVI A,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI A,01H\nTEMP{self._temp_label_index+1}:\n"
+                _footer = f"\nCMP B\nJZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
             
             
@@ -133,9 +136,16 @@ class CodeGen:
                         if node.left == "if":
                             self.generated_code += "\n"+self._eval_conditional(node.right,f'LABEL{self._label_index}') + "\n"
                         
+                        elif node.left == 'while':
+                            self.generated_code += f"\nLOOP{self.loop_counter}:"+self._eval_conditional(node.right,f'LABEL{self._label_index}') + "\n"
+
                     elif node.name == "END_IF":
                         self.generated_code += f"\nLABEL{self._label_index}:\n"
                         self._label_index += 1
+                    elif node.name == "END_WHILE":
+                        self.generated_code += f"\nJMP LOOP{self.loop_counter}\nLABEL{self._label_index}:\n"
+                        self._label_index += 1
+                    
                     
                        
                 break

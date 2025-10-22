@@ -39,6 +39,11 @@ class Parser:
         "cond":[
                 self.rule_if_statement,
                 self.rule_if_block,
+        ],
+
+        "while":[
+            self.rule_while_statement,
+            self.rule_while_block,
         ]
 }
         # explained in ast.txt
@@ -93,6 +98,18 @@ class Parser:
         self.current_function_block.append(self.workingNode)
         
         return _[0],_indg - _ind + 1
+
+    def rule_while_statement(self,keys,val,_ind) -> tuple:
+        _ = Node('COND')
+        _.left = 'while'
+        self.workingNode = _
+
+        _,_indg = self.evaluate_mathematical_expression(keys,val,_ind,evaluate_till="left_curly")
+        self.current_function_block.append(self.workingNode)
+        
+        return _[0],_indg - _ind + 1
+
+    
     
     def evaluate_mathematical_expression(self,keys,val,_ind,workingNode=None,evaluate_till="SEMI"):
         workingNode = self.workingNode if not workingNode else workingNode
@@ -134,6 +151,16 @@ class Parser:
             if new == -1:
                 return (False,f'Expected to Close the if statement using a {BRACKETS['right_curly']}')
             self.current_function_block.append(Node('END_IF'))
+            return (True,new-_ind)
+        else:
+            return (False,"IF Blocks MUST start with '{'")
+    
+    def rule_while_block(self,_,_value,_ind) -> tuple:
+        if _value == 'left_curly':
+            new = self.parse(_ind + 1, till = 'right_curly') # parse after the curly bracket
+            if new == -1:
+                return (False,f'Expected to Close the while statement using a {BRACKETS['right_curly']}')
+            self.current_function_block.append(Node('END_WHILE'))
             return (True,new-_ind)
         else:
             return (False,"IF Blocks MUST start with '{'")

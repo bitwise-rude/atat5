@@ -4,7 +4,12 @@ import string
 
 
 ### Defining the atoms, if you wanna change something change the keys
-KEYWORDS = {'func_dec':'fx','var_dec':'let','cond':'if'} 
+KEYWORDS = {'func_dec':'fx',
+            'var_dec':'let',
+            'cond':'if',
+            'while':'while'
+            }
+ 
 BRACKETS ={
              "left_small":"("   ,
              "right_small":")"   ,
