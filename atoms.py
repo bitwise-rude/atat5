@@ -17,7 +17,7 @@ BRACKETS ={
              "right_curly":"}"    ,
             }
 COMMENT = "#"
-OPERATORS = {'add':'+','sub':'-'}
+OPERATORS = {'add':'+','sub':'-','less_than':"<"}
 MULTIWORD = {"EQUALS_TO":("OPERATOR","==")}
 EQUALS = "="
 BOOLEANS={"true":"true",'false':'false'}

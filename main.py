@@ -33,4 +33,7 @@ AST = parser_obj.parse()
 print(AST)
 
 codegen_obj = codegen.CodeGen(AST,bipat_manager)
-codegen_obj.generate()
+assembly_code = codegen_obj.generate()
+
+with open("out.asm",'w') as file_:
+    file_.write(assembly_code)

@@ -87,6 +87,11 @@ class CodeGen:
                 _ = self._eval_expression(node.left,reg=reg)
                 _footer = "\nSUB B\nMOV B,A"
             
+            elif node.name == 'less_than':
+                _ = self._eval_expression(node.left,reg=reg)
+                _footer = f"\nCMP B\nJC TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                self._temp_label_index += 2
+            
             elif node.name == 'EQUALS_TO':
                 _ = self._eval_expression(node.left,reg=reg)
                 _footer = f"\nCMP B\nJZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
@@ -153,4 +158,4 @@ class CodeGen:
             self.bipat_manager.show_error_and_exit(BipatSyntax,"No main Function Found")
         
         final_code = HEADER + self.generated_code + FOOTER
-        print(final_code)
+        return final_code
