@@ -15,6 +15,10 @@ def read_file() -> list[str]:
         file_.close()
         return contents
     print_invalid_usage_error(f"USE:     {sys.argv[0]} <filename>")
+ 
+def write_file(stuff:str) -> None:
+    with open(sys.argv[1].split(".")[0]+".asm",'w') as file_:
+        file_.write(stuff)
 
 def print_invalid_usage_error(msg:str) -> None:
     print(f"\n\tINVALID USAGE:\n\t\t{msg}")
@@ -35,5 +39,4 @@ print(AST)
 codegen_obj = codegen.CodeGen(AST,bipat_manager)
 assembly_code = codegen_obj.generate()
 
-with open("out.asm",'w') as file_:
-    file_.write(assembly_code)
+write_file(assembly_code)

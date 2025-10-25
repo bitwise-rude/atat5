@@ -15,6 +15,8 @@ BRACKETS ={
              "right_small":")"   ,
             "left_curly":"{"      ,
              "right_curly":"}"    ,
+             "left_square":"[",
+             "right_square":"]"
             }
 COMMENT = "#"
 OPERATORS = {'add':'+','sub':'-','less_than':"<"}
@@ -22,6 +24,7 @@ MULTIWORD = {"INC":("UN_OPERATOR","++"),"EQUALS_TO":("OPERATOR","=="),"LESS_THAN
 EQUALS = "="
 BOOLEANS={"true":"true",'false':'false'}
 SEMI = ";"
+COMMA = ","
 NAMES = string.ascii_letters+"_" # anything except keyword is NAMES/VARIABLES
 
 NUMBERS = "0123456789"

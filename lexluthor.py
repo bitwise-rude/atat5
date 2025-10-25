@@ -94,6 +94,10 @@ class Tokenizer:
                     # don't care till a new line
                     while _pos < len(current_line) and current_line[_pos] != "\n":
                         _pos +=1 
+                    
+                elif checking_letter == COMMA:
+                    self.tokens.append(Token("COMMA",_line_no,_pos,"COMMA"))
+                    _pos += 1
                   
                 
                 # don't care for a space or new line

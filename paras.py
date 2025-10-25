@@ -136,7 +136,26 @@ class Parser:
             else:
                 return (False,f"Expected an operator"),_ind
 
-    def rule_var_dec(self,keys,val,_ind) -> tuple:    
+    def rule_var_dec(self,keys,val,_ind) -> tuple:   
+        ## if array
+        if val == "left_square":
+            # array detected
+            array_values = []
+            _ind +=1
+            while self._tokens[_ind].val != "right_square":
+                if self._tokens[_ind].type == "NUMBER":
+                    array_values.append(self._tokens[_ind].val)
+                    _ind +=1
+                elif self._tokens[_ind].val == "COMMA":
+                    _ind +=1 # skip comma
+                else:
+                    return (False,"Expected a number inside array declaration"),_ind
+            print(array_values)
+            quit()
+            # finished array
+            self.workingNode.right = array_values
+            return (True, _ind - _ind +1)  # tokens to skip
+        # if not array 
         _,_indg = self.evaluate_mathematical_expression(keys,val,_ind)
         return _[0],_indg - _ind + 1
             

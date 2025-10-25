@@ -2,6 +2,7 @@
 -- COOL COOL COOL
 
 ## Next thing to do
+-- array inside use evaluatoin
 -- PRECEDENCE DOESN"T WORK HAVEN"T IMPLEMENTED IT SO DO IT NOW
 
 ## BUGS
