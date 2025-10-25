@@ -20,7 +20,12 @@ BRACKETS ={
             }
 COMMENT = "#"
 OPERATORS = {'add':'+','sub':'-','less_than':"<"}
-MULTIWORD = {"INC":("UN_OPERATOR","++"),"EQUALS_TO":("OPERATOR","=="),"LESS_THAN_EQ":("OPERATOR","<="),"GREATER_THAN_EQ":("OPERATOR",">=")}
+MULTIWORD = {"INC":("UN_OPERATOR","++"),
+             "EQUALS_TO":("OPERATOR","=="),
+             "NOT_EQUALS_TO":("OPERATOR","!="),
+             "LESS_THAN_EQ":("OPERATOR","<="),
+             "GREATER_THAN_EQ":("OPERATOR",">=")
+             }
 EQUALS = "="
 BOOLEANS={"true":"true",'false':'false'}
 SEMI = ";"
