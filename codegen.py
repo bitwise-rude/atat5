@@ -86,6 +86,7 @@ class CodeGen:
             elif node.name == 'sub':
                 _ = self._eval_expression(node.left,reg=reg)
                 _footer = "\nSUB B\nMOV B,A"
+
             
             elif node.name == 'less_than':
                 _ = self._eval_expression(node.left,reg=reg)
@@ -138,6 +139,14 @@ class CodeGen:
                             # self.generated_code+=wanna_assign.generate_initial_code()
                             self.generated_code += _
                             self.generated_code += f"\nSTA 0{to_hex(int(wanna_assign.memory))}H\n"
+                        else:
+                            self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node.left}")
+                            return
+                    
+                    elif node.name == 'INC':
+                        wanna_assign = self._variable_of(node.left)
+                        if wanna_assign:
+                            self.generated_code += f"\nLDA 0{to_hex(int(wanna_assign.memory))}H\nINR A\nSTA 0{to_hex(int(wanna_assign.memory))}H\n"
                         else:
                             self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node.left}")
                             return

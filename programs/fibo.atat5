@@ -1,0 +1,18 @@
+fx main()
+{
+    let a = 0;
+    let b = 1;
+    let c = 0;
+
+    let _till = 10;
+    let n = 0;
+
+    while n < _till{
+        c = a + b;
+        b = a;
+        a = c;
+        n++;
+    }
+
+    let result = a;
+}

@@ -207,15 +207,25 @@ class Parser:
 
     def _parse_names(self,index):
         ## like a = 5; after assigning a variable
+
+
+        # next shold be equals
+        if self._tokens[index+1].val != "EQUALS" :
+            if self._tokens[index+1].type != "UN_OPERATOR":
+                self.error_manager.show_error_and_exit(BipatSyntax,"Expected an Equals Sign or uniary operation",self._tokens[index+1].line_no,self._tokens[index+1].pos)
+                return
+            else: # if univeray
+                _ = Node(self._tokens[index+1].val)
+                self.workingNode = _
+                _.left = self._tokens[index].val 
+                _,_indg = self.evaluate_mathematical_expression(self._tokens[index+2].type,self._tokens[index+2].val,index+2)
+                self.current_function_block.append(self.workingNode)
+                return 3 # for semi
+        
+        # if equals then evaluate the expression
         _ = Node("VAR_ASSIGN")
         self.workingNode = _
         _.left = self._tokens[index].val # variable name
-
-        # next shold be equals
-        if self._tokens[index+1].val != "EQUALS":
-            self.error_manager.show_error_and_exit(BipatSyntax,"Expected an Equals Sign",self._tokens[index+1].line_no,self._tokens[index+1].pos)
-            return
-
         _,_indg = self.evaluate_mathematical_expression(self._tokens[index+2].type,self._tokens[index+2].val,index+2)
         self.current_function_block.append(self.workingNode)
         return _indg - index + 2 # for semi
