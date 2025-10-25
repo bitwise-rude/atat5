@@ -7,14 +7,8 @@
 
 ## BUGS
 
-- the lexer should check for names until there is a space, eg iff would also be regarded as if and f would produce an error, (no this is not the case), make multi word in the same palce
-as the keyword cehcker
-
-- for checking for mathematical check end for non number character not semi colon and for booleans too
-
-- block counter? what a shame change it?
-
-- if statement should make a node not conditional evaluator
+- greater than equal to and less than equal too, dec, etc might not work 
+    since they are not tested nicely
 
 
 
