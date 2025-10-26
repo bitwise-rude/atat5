@@ -228,11 +228,30 @@ class Parser:
         ## like a = 5; after assigning a variable
 
 
-        # next shold be equals
+        # next shold be equals 
         if self._tokens[index+1].val != "EQUALS" :
-            if self._tokens[index+1].type != "UN_OPERATOR":
-                self.error_manager.show_error_and_exit(BipatSyntax,"Expected an Equals Sign or uniary operation",self._tokens[index+1].line_no,self._tokens[index+1].pos)
-                return
+            if self._tokens[index+1].type != "UN_OPERATOR": # or uniary operation
+                # or array assignment
+                if self._tokens[index+1].val != "left_square":
+                    self.error_manager.show_error_and_exit(BipatSyntax,"Expected an Equals Sign after name",self._tokens[index+1].line_no,self._tokens[index+1].pos)
+                    return
+                else: # if is array assignment
+                    _ = Node("ARRAY_ASSIGN")
+                    self.workingNode = _
+                    _.left = self._tokens[index].val  # variable name
+
+                    # evaluate the index
+                    _,_indg = self.evaluate_mathematical_expression(self._tokens[index+2].type,self._tokens[index+2].val,index+2,evaluate_till="right_square")
+                    
+                    # should be equal to now 
+                    if self._tokens[_indg+2].val != "EQUALS":
+                        self.error_manager.show_error_and_exit(BipatSyntax,"Expected an Equals Sign after array index",self._tokens[_indg+1].line_no,self._tokens[_indg+1].pos)
+                        return
+            
+                    # now evaluate the right side expression
+                    _,_indg2 = self.evaluate_mathematical_expression(self._tokens[_indg+3].type,self._tokens[_indg+3].val,_indg+3)
+                    self.current_function_block.append(self.workingNode)
+                    return _indg2 - index +2 # for semi
             else: # if univeray
                 _ = Node(self._tokens[index+1].val)
                 self.workingNode = _
