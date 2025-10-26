@@ -2,11 +2,12 @@
 -- COOL COOL COOL
 
 ## Next thing to do
+-- use INX H for nice memory variable assignation
 -- array inside use evaluatoin
 -- PRECEDENCE DOESN"T WORK HAVEN"T IMPLEMENTED IT SO DO IT NOW
 
 ## BUGS
-
+- for aarays i have returned stuff which is not nice to do fix it 
 - greater than equal to and less than equal too, dec, etc might not work 
     since they are not tested nicely
 

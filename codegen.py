@@ -67,6 +67,7 @@ class CodeGen:
 
     def _eval_expression(self,node,reg="A"): # right now str and int but will be fixed for actual nodes also
         # will always be the right node
+     
         try:
             return f"\nMVI {reg},0{to_hex(int(node))}H"
         except ValueError:
@@ -82,6 +83,8 @@ class CodeGen:
             if node.name == 'add':
                 _ = self._eval_expression(node.left,reg=reg)
                 _footer = "\nADD B\nMOV B,A"
+            
+    
             
             elif node.name == 'sub':
                 _ = self._eval_expression(node.left,reg=reg)
@@ -112,13 +115,29 @@ class CodeGen:
                 _footer = f"\nCMP B\nJNZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
             
-            
+            # array
+            elif node.name == 'ARRAY_DEC':    
+                # array first value stored in memory, at the first since first is taken
+                # since all values are evaluted before hand
+                # and first is pointed by the variable name
+                
+                _code = f"LXI H,0{to_hex(self._var_memory)}H\n" + self._eval_expression(node.left[0],reg=reg) 
 
+                for i in range(1,len(node.left)):
+
+                    _code += "\nINX H\n" + self._eval_expression(node.left[i],reg="D") + "\nMOV M,D\n" 
+
+                return  _code#tmp fix
+            
+                
+            
+    
 
             
             else:
                 self.bipat_manager.show_error_and_exit(BipatSyntax,"Invalid Expression Node")
-
+            
+            
             return  self._eval_expression(node.right,"B")+"\n"+_ +_footer
     
     def _eval_conditional(self,node,label):
@@ -136,6 +155,7 @@ class CodeGen:
                 for node in nodes:
                     if node.name == "VAR_DEC":
                         _ = Variable(node.left,self._var_memory,self._eval_expression(node.right))
+    
                         self.generated_code += _.generate_initial_code()
 
                         self._variables.append(_)
