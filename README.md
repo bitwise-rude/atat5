@@ -2,6 +2,7 @@
 -- COOL COOL COOL
 
 ## Next thing to do
+-- arrays work up to index ff only lol
 -- use INX H for nice memory variable assignation
 -- array inside use evaluatoin
 -- PRECEDENCE DOESN"T WORK HAVEN"T IMPLEMENTED IT SO DO IT NOW

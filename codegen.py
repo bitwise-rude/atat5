@@ -172,6 +172,20 @@ class CodeGen:
                             self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node.left}")
                             return
                     
+                    elif node.name == "ARRAY_ASSIGN":
+                        wanna_assign = self._variable_of(node.left)
+                        if wanna_assign:
+                            # calculate the index
+                            _index_code = self._eval_expression(node.mid,"A") 
+                            _value_code = self._eval_expression(node.right,"E") 
+
+                            self.generated_code += _index_code
+                            self.generated_code += _value_code
+                            self.generated_code += f"\nLXI H,0{to_hex(int(wanna_assign.memory))}H\nADD L\nMOV M,E\n"
+                        else:
+                            self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node.left}")
+                            return
+                    
                     elif node.name == 'INC':
                         wanna_assign = self._variable_of(node.left)
                         if wanna_assign:

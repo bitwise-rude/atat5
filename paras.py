@@ -9,10 +9,12 @@ class Node:
     def __init__(self,name:str):
         self.left = None
         self.right =None # will be nodes fix later
+        self.mid = None # for ternary operators like arrays
         self.name = name
+
     
     def __repr__(self):
-        return f'NODE={self.name} - LEFT={self.left}, RIGHT={self.right}'
+        return f'NODE={self.name} - LEFT={self.left}, MID={self.mid}, RIGHT={self.right}'
 
 ### Main Parser Class
 class Parser:
@@ -111,12 +113,15 @@ class Parser:
 
     
     
-    def evaluate_mathematical_expression(self,keys,val,_ind,workingNode=None,evaluate_till="SEMI"):
+    def evaluate_mathematical_expression(self,keys,val,_ind,workingNode=None,evaluate_till="SEMI",isMid=False):
         workingNode = self.workingNode if not workingNode else workingNode
         if self._tokens[_ind+1].val == evaluate_till: # for single valued stuff
             # this means this is just one thing
             if keys == "NUMBER" or keys == "NAME":
-                workingNode.right = val
+                if not isMid:
+                    workingNode.right = val
+                else:
+                    workingNode.mid = val
                 return (True,1),_ind
             else:
                 return (False,f"Expected some value"),_ind
@@ -126,7 +131,11 @@ class Parser:
             if self._tokens[_ind+1].type == "OPERATOR":
                 new_node = Node(self._tokens[_ind+1].val)
                 new_node.left = val
-                workingNode.right = new_node
+
+                if isMid:
+                    workingNode.mid = new_node
+                else:
+                    workingNode.right = new_node
                     
                 ## aghh
                 keys = self._tokens[_ind + 2].type
@@ -238,10 +247,11 @@ class Parser:
                 else: # if is array assignment
                     _ = Node("ARRAY_ASSIGN")
                     self.workingNode = _
-                    _.left = self._tokens[index].val  # variable name
+                    self.workingNode.left = self._tokens[index].val  # variable name
 
                     # evaluate the index
-                    _,_indg = self.evaluate_mathematical_expression(self._tokens[index+2].type,self._tokens[index+2].val,index+2,evaluate_till="right_square")
+                    _,_indg = self.evaluate_mathematical_expression(self._tokens[index+2].type,self._tokens[index+2].val,index+2,evaluate_till="right_square",isMid=True)
+                    
                     
                     # should be equal to now 
                     if self._tokens[_indg+2].val != "EQUALS":
