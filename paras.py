@@ -141,7 +141,13 @@ class Parser:
                 keys = self._tokens[_ind + 2].type
                 val = self._tokens[_ind + 2].val
 
-                return self.evaluate_mathematical_expression(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node,evaluate_till=evaluate_till) 
+                return self.evaluate_mathematical_expression(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node,evaluate_till=evaluate_till)
+
+            elif  self._tokens[_ind+1].val == "left_square": # array
+                new_node = Node("ARRAY_ACCESS")
+                new_node.left = val
+                # evaluate the index
+                return  self.evaluate_mathematical_expression(self._tokens[_ind+2].type,self._tokens[_ind+2].val,_ind+2,evaluate_till="right_square",workingNode=new_node)
             else:
                 return (False,f"Expected an operator"),_ind
 
