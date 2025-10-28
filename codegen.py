@@ -96,14 +96,19 @@ class CodeGen:
                 _footer = f"\nCMP B\nJC TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
             
+            elif node.name == 'GREATER_THAN_EQ':
+                _ = self._eval_expression(node.left,reg=reg)
+                _footer = f"\nCMP B\nJNC TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                self._temp_label_index += 2
+            
             elif node.name == 'LESS_THAN_EQ':
                 _ = self._eval_expression(node.left,reg=reg)
                 _footer = f"\nCMP B\nJC TEMP{self._temp_label_index}\nJZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
 
-            elif node.name == 'GREATER_THAN_EQ':
+            elif node.name == 'greater_than':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = f"\nCMP B\nJNC TEMP{self._temp_label_index}\nJZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                _footer = f"\nCMP B\nJNC TEMP{self._temp_label_index}\nJNZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
             
             elif node.name == 'EQUALS_TO':

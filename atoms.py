@@ -19,7 +19,7 @@ BRACKETS ={
              "right_square":"]"
             }
 COMMENT = "#"
-OPERATORS = {'add':'+','sub':'-','less_than':"<"}
+OPERATORS = {'add':'+','sub':'-','less_than':"<","greater_than":">",}
 MULTIWORD = {"INC":("UN_OPERATOR","++"),
              "DEC":("UN_OPERATOR","--"),
              "EQUALS_TO":("OPERATOR","=="),

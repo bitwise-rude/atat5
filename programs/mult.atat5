@@ -1,0 +1,17 @@
+# Let's multiply two numbers
+
+fx main()
+{
+    let a = 5;
+    let b = 10;
+
+    let result = 0;
+
+    while a > 0
+    {
+        result = result + b;
+        a = a - 1;
+    }
+    
+
+}
