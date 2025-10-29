@@ -143,16 +143,7 @@ class Parser:
 
                 return self.evaluate_mathematical_expression(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node,evaluate_till=evaluate_till)
 
-            elif  self._tokens[_ind+1].val == "left_square": # array
-                # search until an operator is found
-                while self._tokens[_ind+1].val != evaluate_till and self._tokens[_ind+1].val != "OPERATOR":
-                    _ind +=1
-            
-                ## TODO
-                # evaluate the index
-                return  self.evaluate_mathematical_expression(self._tokens[_ind+2].type,self._tokens[_ind+2].val,_ind+2,evaluate_till="right_square",workingNode=new_node)
-            else:
-                return (False,f"Expected an operator"),_ind
+    
 
     def rule_var_dec(self,keys,val,_ind) -> tuple:   
         ## if array
