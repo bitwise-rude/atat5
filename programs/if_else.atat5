@@ -1,0 +1,14 @@
+# program to implement if else
+
+fx main()
+{
+    let a = 5;
+    let b=0; # will be 1 if positive, -1 if negative or 0
+
+    if (a>0){
+        b = 1
+    }
+    else{
+        b = -1
+    }
+}

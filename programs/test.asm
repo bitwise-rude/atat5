@@ -1,0 +1,32 @@
+
+; Compiled through ATAT5
+; Om Ganapati Namah
+; Ganapatti Baba Moreya
+
+LXI H,0E000H
+
+MVI A,02H
+INX H
+
+MVI D,03H
+MOV M,D
+
+INX H
+
+MVI D,05H
+MOV M,D
+
+INX H
+
+MVI D,07H
+MOV M,D
+
+STA 0E000H
+
+MVI A,00H
+MVI E,064H
+LXI H,0E000H
+ADD L
+MOV M,E
+
+HLT

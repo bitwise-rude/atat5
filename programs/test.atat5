@@ -1,0 +1,3 @@
+fx main(){
+    let x = 5
+}

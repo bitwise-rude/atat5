@@ -7,7 +7,8 @@ import string
 KEYWORDS = {'func_dec':'fx',
             'var_dec':'let',
             'cond':'if',
-            'while':'while'
+            'while':'while',
+            'else':'else'
             }
  
 BRACKETS ={
