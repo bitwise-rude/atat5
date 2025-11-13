@@ -1,3 +1,7 @@
-fx main(){
-    let x = 5
+fx main()
+{
+    let x = [5,4,6];
+    
+    let first = x[0];
+    
 }

@@ -115,6 +115,11 @@ class Parser:
     
     def evaluate_mathematical_expression(self,keys,val,_ind,workingNode=None,evaluate_till="SEMI",isMid=False):
         workingNode = self.workingNode if not workingNode else workingNode
+
+        # how much to skip
+        if self._tokens
+
+
         if self._tokens[_ind+1].val == evaluate_till: # for single valued stuff
             # this means this is just one thing
             if keys == "NUMBER" or keys == "NAME":
@@ -125,7 +130,7 @@ class Parser:
                 return (True,1),_ind
             else:
                 return (False,f"Expected some value"),_ind
-
+   
         else:
                 ## for an entire expression
             if self._tokens[_ind+1].type == "OPERATOR":
@@ -142,6 +147,7 @@ class Parser:
                 val = self._tokens[_ind + 2].val
 
                 return self.evaluate_mathematical_expression(keys=keys,val=val,_ind = _ind + 2, workingNode=new_node,evaluate_till=evaluate_till)
+
 
     
 
@@ -262,14 +268,6 @@ class Parser:
                     _,_indg2 = self.evaluate_mathematical_expression(self._tokens[_indg+3].type,self._tokens[_indg+3].val,_indg+3)
                     self.current_function_block.append(self.workingNode)
                     return _indg2 - index +2 # for semi
-            else: # if univeray
-                _ = Node(self._tokens[index+1].val)
-                self.workingNode = _
-                _.left = self._tokens[index].val 
-                _,_indg = self.evaluate_mathematical_expression(self._tokens[index+2].type,self._tokens[index+2].val,index+2)
-                self.current_function_block.append(self.workingNode)
-                return 3 # for semi
-        
         # if equals then evaluate the expression
         _ = Node("VAR_ASSIGN")
         self.workingNode = _
