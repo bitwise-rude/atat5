@@ -1,0 +1,8 @@
+# some cool array stuff you can do 
+
+fx main()
+{
+    let x = [1,2];
+
+    x[1] = 5+3;
+}

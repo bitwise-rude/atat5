@@ -127,11 +127,14 @@ class CodeGen:
                 # get array
                 _code = self._eval_expression(node.right,reg=reg) # getting index
 
+                # move to reg 'A' if not in 'A'
+                if reg != "A":
+                    _code += f"\nMOV A,{reg}"
                 # give error if not exist for below line
                 existing = self._variable_of(node.left) # getting the memory
                 
-        
-                _code += f"\nLXI H,0{to_hex(existing.memory)}\nADD L\nMOV A,M\nMOV B,A"
+
+                _code += f"\nLXI H,0{to_hex(existing.memory)}H\nADD L\nMOV {reg},M\n"
                 
                 return _code
 
@@ -190,7 +193,7 @@ class CodeGen:
                         wanna_assign = self._variable_of(node.left)
                         if wanna_assign:
                             # calculate the index
-                            _index_code = self._eval_expression(node.mid,"A") 
+                            _index_code = self._eval_expression(node.mid) 
                             _value_code = self._eval_expression(node.right,"E") 
 
                             self.generated_code += _index_code
