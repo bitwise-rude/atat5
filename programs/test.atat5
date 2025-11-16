@@ -2,6 +2,6 @@ fx main()
 {
     let x = [5,4,6];
 
-    let first = x[2];
+    let y = x[0];  
     
 }

@@ -84,6 +84,7 @@ class CodeGen:
                 _ = self._eval_expression(node.left,reg=reg)
                 _footer = "\nADD B\nMOV B,A"
             
+           
     
             
             elif node.name == 'sub':
@@ -121,6 +122,19 @@ class CodeGen:
                 self._temp_label_index += 2
             
             # array
+            elif node.name == 'ARRAY_ACCESS':
+                
+                # get array
+                _code = self._eval_expression(node.right,reg=reg) # getting index
+
+                # give error if not exist for below line
+                existing = self._variable_of(node.left) # getting the memory
+                
+        
+                _code += f"\nLXI H,0{to_hex(existing.memory)}\nADD L\nMOV A,M\n"
+                
+                return _code
+
             elif node.name == 'ARRAY_DEC':    
                 # array first value stored in memory, at the first since first is taken
                 # since all values are evaluted before hand
@@ -129,16 +143,11 @@ class CodeGen:
                 _code = f"LXI H,0{to_hex(self._var_memory)}H\n" + self._eval_expression(node.left[0],reg=reg) 
 
                 for i in range(1,len(node.left)):
-
+                    self._var_memory += 1
                     _code += "\nINX H\n" + self._eval_expression(node.left[i],reg="D") + "\nMOV M,D\n" 
 
                 return  _code#tmp fix
-            
-                
-            
-    
 
-            
             else:
                 self.bipat_manager.show_error_and_exit(BipatSyntax,"Invalid Expression Node")
             
