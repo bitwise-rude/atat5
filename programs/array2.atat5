@@ -2,7 +2,12 @@
 
 fx main()
 {
-    let x = [1,2];
+    let x = [1,2,3,4];
 
-    x[1] = 5+3;
+    let counter = 0;
+
+    while counter < 4 {
+        x[counter] = x[counter] + 1;
+        counter = counter + 1;
+    }
 }

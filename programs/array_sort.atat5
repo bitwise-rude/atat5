@@ -1,0 +1,11 @@
+#sort array in ascending order
+
+fx main()
+{
+    let a = [1,2,3,4];
+
+    if a[0] = a[1]
+    {
+        let c = 6;
+    }
+}

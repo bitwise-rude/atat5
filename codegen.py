@@ -44,8 +44,10 @@ class CodeGen:
 
         # label index
         self._label_index = 0
+        self._nest_lablel_index = 0
         self._temp_label_index = 0
         self.loop_counter = 0 # later combine to single
+        self.nest_loop_counter = 0
 
 
         # Variables are stored as list
@@ -123,9 +125,10 @@ class CodeGen:
             
             # array
             elif node.name == 'ARRAY_ACCESS':
-                
+                # save up the register - A and B (in D and E)
+                _code = ""
                 # get array
-                _code = self._eval_expression(node.right,reg=reg) # getting index
+                _code += self._eval_expression(node.right,reg=reg) # getting index
 
                 # move to reg 'A' if not in 'A'
                 if reg != "A":
@@ -134,7 +137,10 @@ class CodeGen:
                 existing = self._variable_of(node.left) # getting the memory
                 
 
-                _code += f"\nLXI H,0{to_hex(existing.memory)}H\nADD L\nMOV {reg},M\n"
+                _code += f"\nLXI H,0{to_hex(existing.memory)}H\nADD L\nMOV L,A\nMOV A,M\n"
+
+                if reg != "A":
+                    _code += f"\nMOV {reg},A"
                 
                 return _code
 
@@ -159,7 +165,7 @@ class CodeGen:
     
     def _eval_conditional(self,node,label):
             _ = self._eval_expression(node)
-            return _ + f"\nMVI A,00H\nCMP B\nJNC {label}"
+            return _ + f"\nMOV B,A\nMVI A,00H\nCMP B\nJNC {label}"
             
         
 
@@ -193,12 +199,12 @@ class CodeGen:
                         wanna_assign = self._variable_of(node.left)
                         if wanna_assign:
                             # calculate the index
-                            _index_code = self._eval_expression(node.mid) 
-                            _value_code = self._eval_expression(node.right,"E") 
+                            _index_code = self._eval_expression(node.mid,"E") 
+                            _value_code = self._eval_expression(node.right) 
 
                             self.generated_code += _index_code
                             self.generated_code += _value_code
-                            self.generated_code += f"\nLXI H,0{to_hex(int(wanna_assign.memory))}H\nADD L\nMOV M,E\n"
+                            self.generated_code += f"\nMOV B,A\nLXI H,0{to_hex(int(wanna_assign.memory))}H\nMOV A,E\nADD L\nMOV L,A\nMOV M,B\n"
                         else:
                             self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node.left}")
                             return
@@ -221,20 +227,30 @@ class CodeGen:
                        
                     elif node.name == "COND":
                         if node.left == "if":
-                            self.generated_code += "\n"+self._eval_conditional(node.right,f'LABEL{self._label_index}') + "\n"
+                            self.generated_code += "\n"+self._eval_conditional(node.right,f'LABEL{self._label_index+1}') + "\n"
+                            self._label_index += 1
                         
                         elif node.left == 'while':
-                            self.generated_code += f"\nLOOP{self.loop_counter}:"+self._eval_conditional(node.right,f'LABEL{self._label_index}') + "\n"
+                            self.generated_code += f"\nLOOP{self.loop_counter+1}:"+self._eval_conditional(node.right,f'LABEL{self._label_index+1}') + "\n"
+                            self._label_index += 1
+                            self.loop_counter += 1
 
                     elif node.name == "END_IF":
-                        self.generated_code += f"\nLABEL{self._label_index}:\n"
-                        self._label_index += 1
+                        to_write = self._label_index - self._nest_lablel_index
+                        self._nest_lablel_index += 1
+                        self.generated_code += f"\nLABEL{to_write}:\n"
+                      
+
+                    # nested not done for this 
+                    # make nested work by implementing as above
                     elif node.name == "END_WHILE":
-                        self.generated_code += f"\nJMP LOOP{self.loop_counter}\nLABEL{self._label_index}:\n"
-                        self._label_index += 1
-                    
-                    
-                       
+                        to_write = self._label_index - self._nest_lablel_index
+                        self._nest_lablel_index += 1
+
+                        to_write_loop = self.loop_counter - self.nest_loop_counter
+                        self.nest_loop_counter += 1
+                        self.generated_code += f"\nJMP LOOP{to_write_loop}\nLABEL{to_write}:\n"
+                        
                 break
         else: # no main function
             self.bipat_manager.show_error_and_exit(BipatSyntax,"No main Function Found")
