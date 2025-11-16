@@ -131,7 +131,7 @@ class CodeGen:
                 existing = self._variable_of(node.left) # getting the memory
                 
         
-                _code += f"\nLXI H,0{to_hex(existing.memory)}\nADD L\nMOV A,M\n"
+                _code += f"\nLXI H,0{to_hex(existing.memory)}\nADD L\nMOV A,M\nMOV B,A"
                 
                 return _code
 
