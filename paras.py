@@ -130,10 +130,11 @@ class Parser:
         
 
             self._tokens[_ind:_indg+2] = [temp_node]
+            val = temp_node
             # return self.evaluate_mathematical_expression(self._tokens[_indg+1].type,self._tokens[_indg+1].val,_indg+1,)
 
         # print(self._tokens)
-        # print(self._tokens[_ind+1])
+        print(self._tokens[_ind+1])
 
 
         if self._tokens[_ind+1].val == evaluate_till: # for single valued stuff
@@ -164,6 +165,8 @@ class Parser:
                 ## for an entire expression
             if self._tokens[_ind+1].type == "OPERATOR":
                 new_node = Node(self._tokens[_ind+1].val)
+
+          
                 new_node.left = val
 
                 if isMid:
