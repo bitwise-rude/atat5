@@ -116,11 +116,40 @@ class Parser:
     def evaluate_mathematical_expression(self,keys,val,_ind,workingNode=None,evaluate_till="SEMI",isMid=False):
         workingNode = self.workingNode if not workingNode else workingNode
 
-        # how much to skip
-        if self._tokens
+        if self._tokens[_ind+1].val == "left_square":
+            temp_node = Node('ARRAY_ACCESS')
+            temp_node.left = val  # variable name
+            
+            # evaluate the index
+            _,_indg = self.evaluate_mathematical_expression(self._tokens[_ind+2].type,self._tokens[_ind+2].val,_ind+2,evaluate_till="right_square",workingNode=temp_node)
+            
+            # check for errors using _ and _indg
+            # print(self._tokens[_indg+1])
+
+            # now move forward
+        
+
+            self._tokens[_ind:_indg+2] = [temp_node]
+            # return self.evaluate_mathematical_expression(self._tokens[_indg+1].type,self._tokens[_indg+1].val,_indg+1,)
+
+        # print(self._tokens)
+        # print(self._tokens[_ind+1])
 
 
         if self._tokens[_ind+1].val == evaluate_till: # for single valued stuff
+            # could be array
+            
+            try:
+                if self._tokens[_ind].name == "ARRAY_ACCESS":
+                    
+                    if not isMid:
+                        workingNode.right = self._tokens[_ind]
+                    else:
+                        workingNode.mid = self._tokens[_ind]
+                    return (True,1), _ind
+            except AttributeError:
+                pass
+            
             # this means this is just one thing
             if keys == "NUMBER" or keys == "NAME":
                 if not isMid:
