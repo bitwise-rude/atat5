@@ -1,7 +1,12 @@
 fx main()
 {
-    let x = [5,4,6];
-
-    let y = 3 + x[2];  
+    if 0{
+        let a= 0;
+        let c = a + 5;
+        
+    }
+    else{
+        a = 1;
+    }
     
 }

@@ -255,7 +255,8 @@ class CodeGen:
                             # evaluate cond; jump to LABEL{label_index+1} if false (0)
                             cond_code = self._eval_expression(node.right, reg="A")
                             # compare with zero
-                            self.generated_code += "\n" + cond_code + "\nMVI B,00H\nCMP B\nJZ LABEL" + str(self._label_index+1) + "\n"
+                            # b is incremented to check for else
+                            self.generated_code += "\n" + cond_code + "\nMVI B,00H\nCMP B\nMVI D,00H\nJZ LABEL" + str(self._label_index+1) + "\nINR D\n"
                             self._label_index += 1
 
                         elif node.left == 'while':
@@ -263,23 +264,38 @@ class CodeGen:
                             loop_no = self.loop_counter + 1
                             self.generated_code += f"\nLOOP{loop_no}:\n"
                             cond_code = self._eval_expression(node.right, reg="A")
-                            self.generated_code += cond_code + "\nMVI B,00H\nCMP B\nJZ LABEL" + str(self._label_index+1) + "\n"
+                            self.generated_code += cond_code + "\nMVI A,00H\nCMP B\nJNZ LABEL" + str(self._label_index+1) + "\n"
                             self._label_index += 1
                             self.loop_counter += 1
+                    
+                    elif node.name == "ELSE":
+                        # to_write = self._label_index - self._nest_label_index
+                        # self._nest_label_index += 1
+                        self.generated_code += f"\nMVI A, 00H\nCMP D\nJNZ LABEL" + str(self._label_index+1) + "\n"
+                        self._label_index+=1
+                    
+                    elif node.name == "END_ELSE":
+                        # to_write = self._label_index - self._nest_label_index
+                        # self._nest_label_index += 1
+                        to_write = self._label_index-(self._label_index - self._nest_label_index-1)
+                        self._nest_label_index += 1
+                        self.generated_code += f"\nLABEL{to_write}:\n"
 
                     elif node.name == "END_IF":
                         # write the corresponding label for the most recently created label
-                        to_write = self._label_index - self._nest_label_index
+                        to_write = self._label_index-(self._label_index - self._nest_label_index-1)
                         self._nest_label_index += 1
                         self.generated_code += f"\nLABEL{to_write}:\n"
 
                     elif node.name == "END_WHILE":
                         # jump back to correct loop start and write label for exit
-                        to_write = self._label_index - self._nest_label_index
+                        to_write = self._label_index-(self._label_index - self._nest_label_index-1)
                         self._nest_label_index += 1
-                        to_write_loop = self.loop_counter - self.nest_loop_counter
+                        to_write_loop = self._label_index-(self.loop_counter - self.nest_loop_counter-1)
                         self.nest_loop_counter += 1
                         self.generated_code += f"\nJMP LOOP{to_write_loop}\nLABEL{to_write}:\n"
+                    
+                   
 
                 break
         else:

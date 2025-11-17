@@ -46,7 +46,13 @@ class Parser:
         "while":[
             self.rule_while_statement,
             self.rule_while_block,
+        ],
+
+        'else':
+        [
+            self.rule_else_block,
         ]
+
 }
         # explained in ast.txt
         self.AST = []
@@ -211,12 +217,30 @@ class Parser:
         self.current_function_block.append(self.workingNode)
         return (True,1) if keys == "SEMI" else (False, f"Expected a {SEMI}")
     
+    def rule_else_block(self,_,_value,_ind) -> tuple:
+        # check if there was if before or not
+        if self._tokens[_ind-2] != "IF ENDED":
+            return (False,"'else' without a prior 'if'")
+        self.current_function_block.append(Node('ELSE'))
+        if _value == 'left_curly':
+            new = self.parse(_ind + 1, till = 'right_curly') # parse after the curly bracket
+            if new == -1:
+                return (False,f'Expected to Close the else statement using a {BRACKETS['right_curly']}')
+            self.current_function_block.append(Node('END_ELSE'))
+
+            return (True,new-_ind)
+        else:
+            return (False,"Else Blocks MUST start with '{'")
+    
     def rule_if_block(self,_,_value,_ind) -> tuple:
         if _value == 'left_curly':
             new = self.parse(_ind + 1, till = 'right_curly') # parse after the curly bracket
             if new == -1:
                 return (False,f'Expected to Close the if statement using a {BRACKETS['right_curly']}')
             self.current_function_block.append(Node('END_IF'))
+
+            # MAKE room for else statements by stating that an if occured
+            self._tokens[new-1] = "IF ENDED"
             return (True,new-_ind)
         else:
             return (False,"IF Blocks MUST start with '{'")
