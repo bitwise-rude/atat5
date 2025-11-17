@@ -300,6 +300,17 @@ class Parser:
                     _,_indg2 = self.evaluate_mathematical_expression(self._tokens[_indg+3].type,self._tokens[_indg+3].val,_indg+3)
                     self.current_function_block.append(self.workingNode)
                     return _indg2 - index +2 # for semi
+            else:
+                if self._tokens[index+1].val == "INC":
+                    _ =Node("INC")
+                    _.left = self._tokens[index].val # variable name
+                    self.current_function_block.append(_)
+                    return 3 # for semi
+                elif self._tokens[index+1].val == "DEC":
+                    _ =Node("DEC")
+                    _.left = self._tokens[index].val # variable name
+                    self.current_function_block.append(_)
+                    return 3 # for semi
         # if equals then evaluate the expression
         _ = Node("VAR_ASSIGN")
         self.workingNode = _

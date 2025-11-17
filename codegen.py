@@ -210,7 +210,7 @@ class CodeGen:
                     elif node.name == 'INC':
                         wanna_assign = self._variable_of(node.left)
                         if wanna_assign:
-                            self.generated_code += f"\nLDA 0{to_hex(int(wanna_assign.memory))}H\nINR A\nSTA 0{to_hex(int(wanna_assign.memory))}H\n"
+                            self.generated_code += f"\nLXI 0{to_hex(int(wanna_assign.memory))}H\nINR M\n"
                         else:
                             self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node.left}")
                             return
@@ -218,7 +218,7 @@ class CodeGen:
                         wanna_assign = self._variable_of(node.left)
                         if wanna_assign:
                             
-                            self.generated_code += f"\nLDA 0{to_hex(int(wanna_assign.memory))}H\nDCR A\nSTA 0{to_hex(int(wanna_assign.memory))}H\n"
+                            self.generated_code += f"\nLXI 0{to_hex(int(wanna_assign.memory))}H\nDCR M\n"
                         else:
                             self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node.left}")
                             return
