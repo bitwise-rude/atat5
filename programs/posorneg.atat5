@@ -1,0 +1,14 @@
+fx main(){
+    let to_check = 10;
+
+    # check if the num is greater than 10
+
+    if to_check >= 10
+    {
+        let isGreater = true;
+    }
+    else
+    {
+        let isGreater = true;
+    }
+}
