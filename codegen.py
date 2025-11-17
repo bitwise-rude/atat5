@@ -69,7 +69,6 @@ class CodeGen:
 
     def _eval_expression(self,node,reg="A"): # right now str and int but will be fixed for actual nodes also
         # will always be the right node
-     
         try:
             return f"\nMVI {reg},0{to_hex(int(node))}H"
         except ValueError:
@@ -84,55 +83,56 @@ class CodeGen:
         except TypeError:
             if node.name == 'add':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = "\nADD B\nMOV B,A"
-            
-           
-    
-            
+                _footer = "\nADD B"
+
+                if reg !="A":
+                    _footer += f"\nMOV {reg},A"
+
+
             elif node.name == 'sub':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = "\nSUB B\nMOV B,A"
+                _footer = "\nSUB B"
 
+                if reg !="A":
+                    _footer += f"\nMOV {reg},A"
             
             elif node.name == 'less_than':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = f"\nCMP B\nJC TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                _footer = f"\nCMP B\nJC TEMP{self._temp_label_index}\nMVI {reg},00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI {reg},01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
             
             elif node.name == 'GREATER_THAN_EQ':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = f"\nCMP B\nJNC TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                _footer = f"\nCMP B\nJNC TEMP{self._temp_label_index}\nMVI {reg},00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI {reg},01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
             
             elif node.name == 'LESS_THAN_EQ':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = f"\nCMP B\nJC TEMP{self._temp_label_index}\nJZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                _footer = f"\nCMP B\nJC TEMP{self._temp_label_index}\nJZ TEMP{self._temp_label_index}\nMVI {reg},00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI {reg},01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
 
             elif node.name == 'greater_than':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = f"\nCMP B\nJNC TEMP{self._temp_label_index}\nJNZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                _footer = f"\nCMP B\nJNC TEMP{self._temp_label_index}\nJNZ TEMP{self._temp_label_index}\nMVI {reg},00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI {reg},01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
             
             elif node.name == 'EQUALS_TO':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = f"\nCMP B\nJZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                _footer = f"\nCMP B\nJZ TEMP{self._temp_label_index}\nMVI {reg},00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI {reg},01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
             elif node.name == 'NOT_EQUALS_TO':
                 _ = self._eval_expression(node.left,reg=reg)
-                _footer = f"\nCMP B\nJNZ TEMP{self._temp_label_index}\nMVI B,00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI B,01H\nTEMP{self._temp_label_index+1}:\n"
+                _footer = f"\nCMP B\nJNZ TEMP{self._temp_label_index}\nMVI {reg},00H\nJMP TEMP{self._temp_label_index+1}\nTEMP{self._temp_label_index}:\nMVI {reg},01H\nTEMP{self._temp_label_index+1}:\n"
                 self._temp_label_index += 2
             
             # array
             elif node.name == 'ARRAY_ACCESS':
-                # save up the register - A and B (in D and E)
-                _code = ""
                 # get array
-                _code += self._eval_expression(node.right,reg=reg) # getting index
+                _code += self._eval_expression(node.right,reg="A") # getting index
 
                 # move to reg 'A' if not in 'A'
-                if reg != "A":
-                    _code += f"\nMOV A,{reg}"
+                # if reg != "A":
+                #     _code += f"\nMOV A,{reg}"
                 # give error if not exist for below line
                 existing = self._variable_of(node.left) # getting the memory
                 
@@ -167,8 +167,6 @@ class CodeGen:
             _ = self._eval_expression(node)
             return _ + f"\nMOV B,A\nMVI A,00H\nCMP B\nJNC {label}"
             
-        
-
     def generate(self):
         # check for the main function
         for (fn_name,nodes) in self._ast:
@@ -199,12 +197,12 @@ class CodeGen:
                         wanna_assign = self._variable_of(node.left)
                         if wanna_assign:
                             # calculate the index
-                            _index_code = self._eval_expression(node.mid,"E") 
+                            _index_code = self._eval_expression(node.mid,"C") 
                             _value_code = self._eval_expression(node.right) 
 
                             self.generated_code += _index_code
                             self.generated_code += _value_code
-                            self.generated_code += f"\nMOV B,A\nLXI H,0{to_hex(int(wanna_assign.memory))}H\nMOV A,E\nADD L\nMOV L,A\nMOV M,B\n"
+                            self.generated_code += f"\nMOV B,A\nLXI H,0{to_hex(int(wanna_assign.memory))}H\nMOV A,C\nADD L\nMOV L,A\nMOV M,B\n"
                         else:
                             self.bipat_manager.show_error_and_exit(BipatVariableNotFound,f"No Variable Named:{node.left}")
                             return
