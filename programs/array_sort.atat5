@@ -1,5 +1,30 @@
-fx main() {
-    let a = [2,2,3];
+#sort array in ascending order
+
+fx main()
+{
+    let a = [3,1,2];
+    let n = 3;
+
+    let i = 0;
+
     let j = 0;
-    let c = a[j+1] > a[j+1];
+    let temp = 0;
+    let remp = 0;
+
+    while i < n{
+        j = 0;
+        remp = n - 1;
+
+        while j < remp {
+            if a[j] > a[j+1]
+            {
+                temp = a[j];
+                a[j] = a[j+1];
+                a[j+1] = temp;
+            }
+            j = j + 1;
+        }
+
+        i++;
+    }
 }
