@@ -1,6 +1,5 @@
-fx main()
-{
-   let a = 1;
-   a++;
-
+fx main() {
+    let a = [2,2,3];
+    let j = 0;
+    let c = a[j+1] > a[j+1];
 }
